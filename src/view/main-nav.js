@@ -10,7 +10,6 @@ const createFilterItem = (filter) => {
     : `<a href="#${name}" class="main-navigation__item">${capitalizeWord(name)} <span class="main-navigation__item-count">${count}</span></a>`;
 };
 
-
 const createMainNav = (filterItems) => {
   const filterItemsTemplate = filterItems
     .map((filter, index) => createFilterItem(filter, index === 0))

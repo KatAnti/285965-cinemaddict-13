@@ -1,3 +1,12 @@
+
+const createGenres = (genres) => {
+  let template = ``;
+  genres.split(`,`).forEach((genre) => {
+    template += `<span class="film-details__genre">${genre}</span>`;
+  });
+  return template;
+};
+
 const createFilmPopup = (film) => {
   const {title,
     originalTitle,
@@ -18,14 +27,6 @@ const createFilmPopup = (film) => {
     isFavourite} = film;
 
   const genresTitle = genres.split(`,`).length > 1 ? `Genres` : `Genre`;
-
-  const createGenres = () => {
-    let template = ``;
-    genres.split(`,`).forEach((genre) => {
-      template += `<span class="film-details__genre">${genre}</span>`;
-    });
-    return template;
-  };
 
   return `<section class="film-details">
       <form class="film-details__inner" action="" method="get">
@@ -80,7 +81,7 @@ const createFilmPopup = (film) => {
                 <tr class="film-details__row">
                   <td class="film-details__term">${genresTitle}</td>
                   <td class="film-details__cell">
-                    ${createGenres()}
+                    ${createGenres(genres)}
                 </tr>
               </table>
 
