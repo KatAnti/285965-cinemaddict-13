@@ -1,6 +1,8 @@
+import {FILMS_COUNT} from '../const.js';
+
 const createFooterStatistics = () => {
   return `<section class="footer__statistics">
-        <p>130 291 movies inside</p>
+        <p>${FILMS_COUNT} movies inside</p>
       </section>`;
 };
 
