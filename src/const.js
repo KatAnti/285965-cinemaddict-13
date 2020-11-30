@@ -107,4 +107,15 @@ ranks.set(`more`, `Movie Buff`);
 
 const FILMS_COUNT = 25;
 
-export {DESCRIPTION, TITLES, DIRECTORS, ACTORS, SCREENWRITERS, COUNTRIES, GENRES, POSTERS, EMOJI, USERS, FILMS_COUNT, ranks};
+const RenderPosition = {
+  AFTERBEGIN: `afterbegin`,
+  BEFOREEND: `beforeend`
+};
+
+const ListsTitles = {
+  main: `All movies. Upcoming`,
+  top: `Top rated`,
+  mostCommented: `Most commented`
+};
+
+export {DESCRIPTION, TITLES, DIRECTORS, ACTORS, SCREENWRITERS, COUNTRIES, GENRES, POSTERS, EMOJI, USERS, FILMS_COUNT, ranks, ListsTitles, RenderPosition};

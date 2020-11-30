@@ -1,16 +1,16 @@
 import {createElement} from "../utils.js";
 
-const createFilmsBoard = () => {
-  return `<section class="films"></section>`;
+const createNoFilmsMessage = () => {
+  return `<h2 class="films-list__title">There are no movies in our database</h2>`;
 };
 
-class FilmsBoard {
+class NoFilms {
   constructor() {
     this._element = null;
   }
 
   getTemplate() {
-    return createFilmsBoard();
+    return createNoFilmsMessage(this._film);
   }
 
   getElement() {
@@ -26,4 +26,4 @@ class FilmsBoard {
   }
 }
 
-export default FilmsBoard;
+export default NoFilms;
