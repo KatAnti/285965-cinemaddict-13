@@ -18,6 +18,8 @@ import {generateUserStats} from "./mock/user-stats.js";
 
 const FILMS_COUNT_PER_STEP = 5;
 const EXTRA_FILMS_COUNT = 2;
+const ESCAPE = `Escape`;
+const ESC = `Esc`;
 
 const films = new Array(FILMS_COUNT).fill().map(generateFilm);
 const filters = generateFilter(films);
@@ -46,7 +48,7 @@ const renderPopup = (film) => {
   };
 
   const onEscKeyDown = (evt) => {
-    if (evt.key === `Escape` || evt.key === `Esc`) {
+    if (evt.key === ESCAPE || evt.key === ESC) {
       evt.preventDefault();
       removePopup();
       document.removeEventListener(`keydown`, onEscKeyDown);
