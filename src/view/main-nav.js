@@ -1,3 +1,5 @@
+import {createElement} from "../utils.js";
+
 const capitalizeWord = (word) => {
   return word[0].toUpperCase() + word.slice(1);
 };
@@ -22,4 +24,27 @@ const createMainNav = (filterItems) => {
     </nav>`;
 };
 
-export {createMainNav};
+class MainNavigation {
+  constructor(filterItems) {
+    this._filterItems = filterItems;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createMainNav(this._filterItems);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
+
+export default MainNavigation;

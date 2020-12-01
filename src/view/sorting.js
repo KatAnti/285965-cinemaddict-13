@@ -1,3 +1,5 @@
+import {createElement} from "../utils.js";
+
 const createSorting = () => {
   return `<ul class="sort">
       <li><a href="#" class="sort__button sort__button--active">Sort by default</a></li>
@@ -6,4 +8,26 @@ const createSorting = () => {
     </ul>`;
 };
 
-export {createSorting};
+class SortBy {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createSorting();
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
+
+export default SortBy;

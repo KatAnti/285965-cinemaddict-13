@@ -1,3 +1,4 @@
+import {createElement} from "../utils.js";
 
 const createGenres = (genres) => {
   let template = ``;
@@ -144,4 +145,28 @@ const createFilmPopup = (film) => {
     </section>`;
 };
 
-export {createFilmPopup};
+class FilmPopup {
+  constructor(film) {
+    this._element = null;
+    this._film = film;
+  }
+
+  getTemplate() {
+    return createFilmPopup(this._film);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
+
+export default FilmPopup;
+

@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import {isPropertyActive} from "../utils.js";
+import {createElement, isPropertyActive} from "../utils.js";
 
 const createFilmCard = (film) => {
   const mainGenre = film.genres.split(`,`)[0];
@@ -28,4 +28,28 @@ const createFilmCard = (film) => {
     </article>`;
 };
 
-export {createFilmCard};
+class Film {
+  constructor(film) {
+    this._film = film;
+
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createFilmCard(this._film);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
+
+export default Film;

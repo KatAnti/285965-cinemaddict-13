@@ -1,4 +1,23 @@
 import dayjs from 'dayjs';
+import {RenderPosition} from './const.js';
+
+const render = (container, element, place) => {
+  switch (place) {
+    case RenderPosition.AFTERBEGIN:
+      container.prepend(element);
+      break;
+    case RenderPosition.BEFOREEND:
+      container.append(element);
+      break;
+  }
+};
+
+const createElement = (template) => {
+  const newElement = document.createElement(`div`);
+  newElement.innerHTML = template;
+
+  return newElement.firstChild;
+};
 
 const getRandomInteger = (a = 0, b = 1) => {
   return Math.floor(a + Math.random() * (b + 1 - a));
@@ -46,4 +65,4 @@ const generateCommentDate = () => {
   return randomDate;
 };
 
-export {getRandomInteger, getRandomItemsAsString, isPropertyActive, generateRandomDate, generateCommentDate};
+export {render, createElement, getRandomInteger, getRandomItemsAsString, isPropertyActive, generateRandomDate, generateCommentDate};

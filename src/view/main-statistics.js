@@ -1,3 +1,5 @@
+import {createElement} from "../utils.js";
+
 const createMainStatistics = (user) => {
   const {rank} = user;
   return `<section class="statistic">
@@ -48,4 +50,27 @@ const createMainStatistics = (user) => {
     </section>`;
 };
 
-export {createMainStatistics};
+class MainStatistic {
+  constructor(user) {
+    this._user = user;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createMainStatistics(this._user);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
+
+export default MainStatistic;
