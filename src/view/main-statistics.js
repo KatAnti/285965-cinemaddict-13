@@ -1,4 +1,4 @@
-import {createElement} from "../utils.js";
+import AbstractView from '../view/abstract.js';
 
 const createMainStatistics = (user) => {
   const {rank} = user;
@@ -50,26 +50,15 @@ const createMainStatistics = (user) => {
     </section>`;
 };
 
-class MainStatistic {
+class MainStatistic extends AbstractView {
   constructor(user) {
+    super();
+
     this._user = user;
-    this._element = null;
   }
 
   getTemplate() {
     return createMainStatistics(this._user);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 

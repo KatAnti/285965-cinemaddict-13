@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
-import {createElement, isPropertyActive} from "../utils.js";
+import AbstractView from '../view/abstract.js';
+import {isPropertyActive} from '../utils/film.js';
 
 const createFilmCard = (film) => {
   const mainGenre = film.genres.split(`,`)[0];
@@ -28,27 +29,48 @@ const createFilmCard = (film) => {
     </article>`;
 };
 
-class Film {
+class Film extends AbstractView {
   constructor(film) {
-    this._film = film;
+    super();
 
-    this._element = null;
+    this._film = film;
+    this._posterClickHandler = this._posterClickHandler.bind(this);
+    this._titleClickHandler = this._titleClickHandler.bind(this);
+    this._commentsClickHandler = this._commentsClickHandler.bind(this);
   }
 
   getTemplate() {
     return createFilmCard(this._film);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _posterClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.posterClick();
   }
 
-  removeElement() {
-    this._element = null;
+  _titleClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.titleClick();
+  }
+
+  _commentsClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.commentsClick();
+  }
+
+  setPosterClickHandler(callback) {
+    this._callback.posterClick = callback;
+    this.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, this._posterClickHandler);
+  }
+
+  setTitleClickHandler(callback) {
+    this._callback.titleClick = callback;
+    this.getElement().querySelector(`.film-card__title`).addEventListener(`click`, this._titleClickHandler);
+  }
+
+  setCommentsClickHandler(callback) {
+    this._callback.commentsClick = callback;
+    this.getElement().querySelector(`.film-card__comments`).addEventListener(`click`, this._commentsClickHandler);
   }
 }
 
