@@ -1,22 +1,26 @@
 import AbstractView from '../view/abstract.js';
+import {ListsType} from '../const.js';
 
-const createFilmsList = (title, isMain) => {
-  return `<section class="films-list ${isMain ? `` : `films-list--extra`}">
-    <h2 class="films-list__title ${isMain ? `visually-hidden` : ``}">${title}</h2>
-    <div class="films-list__container">
-    </div>
+const createFilmsList = (title, type) => {
+  return `<section class="films-list ${type === ListsType.ADDITIONAL ? `films-list--extra` : ``}">
+    <h2 class="films-list__title ${type === ListsType.MAIN ? `visually-hidden` : ``}">${title}</h2>
+    <div class="films-list__container"></div>
   </section>`;
 };
 
 class FilmsList extends AbstractView {
-  constructor(isMain, title) {
+  constructor(title, type) {
     super();
-    this._isMain = isMain;
+    this._type = type;
     this._title = title;
   }
 
   getTemplate() {
-    return createFilmsList(this._isMain, this._title);
+    return createFilmsList(this._title, this._type);
+  }
+
+  getContainer() {
+    return this.getElement().querySelector(`.films-list__container`);
   }
 }
 

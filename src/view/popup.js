@@ -1,4 +1,13 @@
 import AbstractView from '../view/abstract.js';
+import Comment from '../view/comment.js';
+
+const createComments = (comments) => {
+  let template = ``;
+  comments.forEach((comment) => {
+    template += new Comment(comment).getTemplate();
+  });
+  return template;
+};
 
 const createGenres = (genres) => {
   let template = ``;
@@ -108,7 +117,7 @@ const createFilmPopup = (film) => {
         <section class="film-details__comments-wrap">
         <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
 
-        <ul class="film-details__comments-list"></ul>
+        <ul class="film-details__comments-list">${createComments(comments)}</ul>
 
         <div class="film-details__new-comment">
           <div class="film-details__add-emoji-label"></div>

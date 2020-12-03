@@ -18,9 +18,9 @@ const generateCommentDate = () => {
   const randomDate = dayjs(generateRandomDate()).set(`year`, year).format(`YYYY-MM-DD HH:mm`);
   const difference = now.get(`date`) - dayjs(randomDate).get(`date`);
 
-  if (difference < 7 && difference > 0) {
+  if (year === now.get(`year`) && difference < 7 && difference > 0) {
     return `${difference} days ago`;
-  } else if (difference === 0) {
+  } else if (year === now.get(`year`) && difference === 0) {
     return `Today`;
   }
 
