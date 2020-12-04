@@ -1,5 +1,6 @@
 import {DESCRIPTION, TITLES, DIRECTORS, ACTORS, SCREENWRITERS, COUNTRIES, GENRES, POSTERS} from '../const.js';
-import {getRandomInteger, getRandomItemsAsString, generateRandomDate} from '../utils.js';
+import {getRandomInteger, getRandomItemsAsString} from '../utils/common.js';
+import {generateRandomDate} from '../utils/film.js';
 import {generateComment} from '../mock/comment.js';
 
 const generateFilm = () => {

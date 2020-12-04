@@ -1,4 +1,4 @@
-import {createElement} from "../utils.js";
+import AbstractView from '../view/abstract.js';
 
 const capitalizeWord = (word) => {
   return word[0].toUpperCase() + word.slice(1);
@@ -24,26 +24,14 @@ const createMainNav = (filterItems) => {
     </nav>`;
 };
 
-class MainNavigation {
+class MainNavigation extends AbstractView {
   constructor(filterItems) {
+    super();
     this._filterItems = filterItems;
-    this._element = null;
   }
 
   getTemplate() {
     return createMainNav(this._filterItems);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 

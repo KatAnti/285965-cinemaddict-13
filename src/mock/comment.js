@@ -1,4 +1,5 @@
-import {getRandomItemsAsString, generateCommentDate} from '../utils.js';
+import {getRandomItemsAsString} from '../utils/common.js';
+import {generateCommentDate} from '../utils/film.js';
 import {EMOJI, USERS, DESCRIPTION} from '../const.js';
 
 const generateComment = () => {

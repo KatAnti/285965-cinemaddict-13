@@ -113,9 +113,14 @@ const RenderPosition = {
 };
 
 const ListsTitles = {
-  main: `All movies. Upcoming`,
-  top: `Top rated`,
-  mostCommented: `Most commented`
+  MAIN: `All movies. Upcoming`,
+  TOP: `Top rated`,
+  MOST_COMMENTED: `Most commented`
 };
 
-export {DESCRIPTION, TITLES, DIRECTORS, ACTORS, SCREENWRITERS, COUNTRIES, GENRES, POSTERS, EMOJI, USERS, FILMS_COUNT, ranks, ListsTitles, RenderPosition};
+const ListsType = {
+  MAIN: `main`,
+  ADDITIONAL: `additional`
+};
+
+export {DESCRIPTION, TITLES, DIRECTORS, ACTORS, SCREENWRITERS, COUNTRIES, GENRES, POSTERS, EMOJI, USERS, FILMS_COUNT, ranks, ListsTitles, ListsType, RenderPosition};
