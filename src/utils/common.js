@@ -18,5 +18,18 @@ const getRandomItemsAsString = (array, amount = 1, separator) => {
   return result;
 };
 
+const updateItem = (items, update) => {
+  const index = items.findIndex((item) => item.id === update.id);
 
-export {getRandomInteger, getRandomItemsAsString};
+  if (index === -1) {
+    return items;
+  }
+
+  return [
+    ...items.slice(0, index),
+    update,
+    ...items.slice(index + 1)
+  ];
+};
+
+export {getRandomInteger, getRandomItemsAsString, updateItem};
