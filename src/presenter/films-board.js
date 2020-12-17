@@ -41,7 +41,7 @@ class FilmsBoardPresenter {
 
   _handleFilmChange(updatedFilm) {
     this._boardFilms = updateItem(this._boardFilms, updatedFilm);
-    this._filmPresenter[updatedFilm.id].forEach((film) => film.init(updatedFilm));
+    this._filmPresenter[updatedFilm.id].forEach((film) => film.update(updatedFilm));
   }
 
   _renderFilm(film, container) {
@@ -52,6 +52,7 @@ class FilmsBoardPresenter {
     } else {
       this._filmPresenter[film.id].push(filmPresenter);
     }
+    console.log(this._filmPresenter);
   }
 
   _handleShowMoreButtonClick() {
@@ -88,15 +89,6 @@ class FilmsBoardPresenter {
     if (this._boardFilms.length > FILMS_COUNT_PER_STEP) {
       this._renderShowMoreButton();
     }
-  }
-
-  _clearFilmList() {
-    Object
-      .values(this._filmPresenter)
-      .forEach((presenter) => presenter.destroy());
-    this._filmPresenter = {};
-    this._renderedTaskCount = FILMS_COUNT_PER_STEP;
-    remove(this._showMoreButtonComponent);
   }
 
   _renderBoard() {

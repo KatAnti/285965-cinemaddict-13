@@ -29,13 +29,36 @@ class FilmPresenter {
 
   init(film) {
     this._film = film;
-
-    const prevFilmComponent = this._filmComponent;
-    const prevPopupComponent = this._popupComponent;
-
     this._filmComponent = new Film(film);
     this._popupComponent = new FilmPopup(film);
 
+    this._setEventHandlers();
+    this._renderFilmCard();
+  }
+
+  update(newFilm) {
+    const prevFilmCard = this._filmComponent;
+    const prevPopupCard = this._popupComponent;
+
+    this._film = newFilm;
+    this._filmComponent = new Film(newFilm);
+    this._popupComponent = new FilmPopup(newFilm);
+
+    this._setEventHandlers();
+
+    replace(this._filmComponent, prevFilmCard);
+    replace(this._popupComponent, prevPopupCard);
+
+    remove(prevFilmCard);
+    remove(prevPopupCard);
+  }
+
+  destroy() {
+    remove(this._filmComponent);
+    remove(this._popupComponent);
+  }
+
+  _setEventHandlers() {
     this._filmComponent.setPosterClickHandler(this._handlePosterClick);
     this._filmComponent.setTitleClickHandler(this._handleTitleClick);
     this._filmComponent.setCommentsClickHandler(this._handleCommentsClick);
@@ -49,32 +72,10 @@ class FilmPresenter {
     this._popupComponent.setWatchlistClickHandler(this._handleWatchlistClick);
 
     this._popupComponent.setCloseClickHandler(this._handleCloseButtonClick);
-
-    if (prevFilmComponent === null || prevPopupComponent === null) {
-      this._renderFilmCard();
-      return;
-    }
-
-    if (this._filmListContainer.contains(prevFilmComponent.getElement())) {
-      replace(this._filmComponent, prevFilmComponent);
-    }
-
-    if (mainElement.contains(prevPopupComponent.getElement())) {
-      replace(this._popupComponent, prevPopupComponent);
-    }
-
-    remove(prevFilmComponent);
-    remove(prevPopupComponent);
-  }
-
-  destroy() {
-    remove(this._filmComponent);
-    remove(this._popupComponent);
   }
 
   _removePopup() {
     mainElement.removeChild(this._popupComponent.getElement());
-    this._popupComponent.removeElement();
     bodyElement.classList.remove(`hide-overflow`);
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
   }
