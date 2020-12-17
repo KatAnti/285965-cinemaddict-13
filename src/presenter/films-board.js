@@ -52,7 +52,6 @@ class FilmsBoardPresenter {
     } else {
       this._filmPresenter[film.id].push(filmPresenter);
     }
-    console.log(this._filmPresenter);
   }
 
   _handleShowMoreButtonClick() {
