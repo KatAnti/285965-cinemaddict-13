@@ -37,8 +37,8 @@ class FilmPresenter {
   }
 
   update(newFilm) {
-    const prevFilmCard = this._filmComponent;
-    const prevPopupCard = this._popupComponent;
+    const prevFilmComponent = this._filmComponent;
+    const prevPopupComponent = this._popupComponent;
 
     this._film = newFilm;
     this._filmComponent = new Film(newFilm);
@@ -46,11 +46,16 @@ class FilmPresenter {
 
     this._setEventHandlers();
 
-    replace(this._filmComponent, prevFilmCard);
-    replace(this._popupComponent, prevPopupCard);
+    if (this._filmListContainer.contains(prevFilmComponent.getElement())) {
+      replace(this._filmComponent, prevFilmComponent);
+    }
 
-    remove(prevFilmCard);
-    remove(prevPopupCard);
+    if (mainElement.contains(prevPopupComponent.getElement())) {
+      replace(this._popupComponent, prevPopupComponent);
+    }
+
+    remove(prevFilmComponent);
+    remove(prevPopupComponent);
   }
 
   destroy() {
