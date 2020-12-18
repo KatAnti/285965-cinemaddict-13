@@ -3,12 +3,15 @@ import {getRandomInteger, getRandomItemsAsString} from '../utils/common.js';
 import {generateRandomDate} from '../utils/film.js';
 import {generateComment} from '../mock/comment.js';
 
+const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
+
 const generateFilm = () => {
   const COMENTS_COUNT = getRandomInteger(0, 5);
   const comments = new Array(COMENTS_COUNT).fill().map(generateComment);
   const filmTitle = getRandomItemsAsString(TITLES);
   const generateDescription = getRandomItemsAsString(DESCRIPTION.split(`.`), getRandomInteger(1, DESCRIPTION.split(`.`).length));
   return {
+    id: generateId(),
     title: filmTitle,
     originalTitle: `Original: ${filmTitle}`,
     poster: getRandomItemsAsString(POSTERS),
