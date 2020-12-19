@@ -27,4 +27,17 @@ const generateCommentDate = () => {
   return randomDate;
 };
 
-export {isPropertyActive, generateRandomDate, generateCommentDate};
+const sortByDate = (prevFilm, nextFilm) => {
+  return dayjs(nextFilm.releaseDate).diff(dayjs(prevFilm.releaseDate));
+};
+
+const sortByRating = (prevFilm, nextFilm) => {
+  return nextFilm.rating - prevFilm.rating;
+};
+
+const sortByCommentsAmount = (prevFilm, nextFilm) => {
+  console.log(nextFilm.comments.length - prevFilm.comments.length);
+  return nextFilm.comments.length - prevFilm.comments.length;
+};
+
+export {isPropertyActive, generateRandomDate, generateCommentDate, sortByDate, sortByRating, sortByCommentsAmount};

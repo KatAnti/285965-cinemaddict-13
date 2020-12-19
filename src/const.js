@@ -99,6 +99,12 @@ const USERS = [
   `Pipa Lupa`
 ];
 
+const SortType = {
+  DEFAULT: `default`,
+  BY_DATE: `by-date`,
+  BY_RATING: `by-rating`
+};
+
 const ranks = new Map();
 ranks.set(0, ``);
 ranks.set(10, `Novice`);
@@ -123,4 +129,4 @@ const ListsType = {
   ADDITIONAL: `additional`
 };
 
-export {DESCRIPTION, TITLES, DIRECTORS, ACTORS, SCREENWRITERS, COUNTRIES, GENRES, POSTERS, EMOJI, USERS, FILMS_COUNT, ranks, ListsTitles, ListsType, RenderPosition};
+export {DESCRIPTION, TITLES, DIRECTORS, ACTORS, SCREENWRITERS, COUNTRIES, GENRES, POSTERS, EMOJI, USERS, FILMS_COUNT, ranks, ListsTitles, ListsType, RenderPosition, SortType};
