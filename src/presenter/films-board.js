@@ -3,7 +3,7 @@ import NoFilms from '../view/no-films.js';
 import FilmsList from '../view/films-list.js';
 import ButtonShowMore from '../view/show-more-button.js';
 import FilmPresenter from '../presenter/film.js';
-import sortBy from '../view/sorting.js';
+import SortBy from '../view/sorting.js';
 import FooterStatistic from '../view/footer-statistics.js';
 import MainNavigation from '../view/main-nav.js';
 import UserRank from '../view/user-rank.js';
@@ -37,7 +37,7 @@ class FilmsBoardPresenter {
     this._userRankComponent = null;
     this._filmBoardComponent = new FilmsBoard();
     this._mainNavComponent = null;
-    this._sortComponent = new sortBy();
+    this._sortComponent = new SortBy();
     this._noFilmsComponent = new NoFilms();
     this._mainListComponent = new FilmsList(ListsTitles.MAIN, ListsType.MAIN);
     this._topListComponent = new FilmsList(ListsTitles.TOP, ListsType.ADDITIONAL);
@@ -50,6 +50,7 @@ class FilmsBoardPresenter {
     this._handleFilmChange = this._handleFilmChange.bind(this);
 
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
+    this._handlePopupModeChange = this._handlePopupModeChange.bind(this);
   }
 
   init(boardFilms) {
@@ -79,7 +80,6 @@ class FilmsBoardPresenter {
   }
 
   _sortTasks(sortType) {
-    console.log(sortType, sortType.BY_DATE);
     switch (sortType) {
       case SortType.BY_DATE:
         this._boardFilms.sort(sortByDate);
@@ -98,7 +98,7 @@ class FilmsBoardPresenter {
     Object.values(this._filmPresenter).forEach((presenters) => {
       presenters.forEach((presenter) => {
         presenter.destroy();
-      })
+      });
     });
     this._filmPresenter = {};
     this._renderedTaskCount = FILMS_COUNT_PER_STEP;
@@ -117,8 +117,16 @@ class FilmsBoardPresenter {
     this._renderCommentedlList();
   }
 
+  _handlePopupModeChange() {
+    Object.values(this._filmPresenter).forEach((presenters) => {
+      presenters.forEach((presenter) => {
+        presenter.closePopup();
+      });
+    });
+  }
+
   _renderFilm(film, container) {
-    const filmPresenter = new FilmPresenter(container, this._handleFilmChange);
+    const filmPresenter = new FilmPresenter(container, this._handleFilmChange, this._handlePopupModeChange);
     filmPresenter.init(film);
     if (!this._filmPresenter[film.id]) {
       this._filmPresenter[film.id] = [filmPresenter];

@@ -129,4 +129,9 @@ const ListsType = {
   ADDITIONAL: `additional`
 };
 
-export {DESCRIPTION, TITLES, DIRECTORS, ACTORS, SCREENWRITERS, COUNTRIES, GENRES, POSTERS, EMOJI, USERS, FILMS_COUNT, ranks, ListsTitles, ListsType, RenderPosition, SortType};
+const PopupMode = {
+  OPEN: `OPEN`,
+  CLOSE: `CLOSE`
+};
+
+export {DESCRIPTION, TITLES, DIRECTORS, ACTORS, SCREENWRITERS, COUNTRIES, GENRES, POSTERS, EMOJI, USERS, FILMS_COUNT, ranks, ListsTitles, ListsType, RenderPosition, SortType, PopupMode};

@@ -36,7 +36,6 @@ const sortByRating = (prevFilm, nextFilm) => {
 };
 
 const sortByCommentsAmount = (prevFilm, nextFilm) => {
-  console.log(nextFilm.comments.length - prevFilm.comments.length);
   return nextFilm.comments.length - prevFilm.comments.length;
 };
 

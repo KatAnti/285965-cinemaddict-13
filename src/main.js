@@ -1,4 +1,4 @@
-import {FILMS_COUNT, RenderPosition} from './const.js';
+import {FILMS_COUNT} from './const.js';
 import FilmsBoardPresenter from './presenter/films-board.js';
 import {generateFilm} from './mock/film.js';
 
