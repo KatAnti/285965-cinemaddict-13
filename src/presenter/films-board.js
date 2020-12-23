@@ -61,8 +61,8 @@ class FilmsBoardPresenter {
     this._filters = generateFilter(this._boardFilms);
     this._userStats = generateUserStats(this._boardFilms);
 
-    this._renderUserRank(this._userStats);
-    this._renderMainNav(this._filters);
+    this._renderUserRank();
+    this._renderMainNav();
     this._renderSort();
     this._renderFooterStats();
     render(this._boardContainerMain, this._filmBoardComponent, RenderPosition.BEFOREEND);
@@ -70,7 +70,7 @@ class FilmsBoardPresenter {
     render(this._filmBoardComponent, this._topListComponent, RenderPosition.BEFOREEND);
     render(this._filmBoardComponent, this._commentedListComponent, RenderPosition.BEFOREEND);
 
-    this._renderMainStats(this._userStats);
+    this._renderMainStats();
     this._renderBoard();
   }
 
@@ -155,25 +155,25 @@ class FilmsBoardPresenter {
     });
   }
 
-  _renderTopFilms(from, to) {
-    this._topFilms.slice(from, to).forEach((film) => {
+  _renderTopFilms() {
+    this._topFilms.slice(0, Math.min(this._boardFilms.length, EXTRA_FILMS_COUNT)).forEach((film) => {
       this._renderFilm(film, this._topListComponent.getContainer());
     });
   }
 
-  _renderCommentedFilms(from, to) {
-    this._commentedFilms.slice(from, to).forEach((film) => {
+  _renderCommentedFilms() {
+    this._commentedFilms.slice(0, Math.min(this._boardFilms.length, EXTRA_FILMS_COUNT)).forEach((film) => {
       this._renderFilm(film, this._commentedListComponent.getContainer());
     });
   }
 
-  _renderUserRank(userStats) {
-    this._userRankComponent = new UserRank(userStats);
+  _renderUserRank() {
+    this._userRankComponent = new UserRank(this._userStats);
     render(this._boardContainerHeader, this._userRankComponent, RenderPosition.BEFOREEND);
   }
 
-  _renderMainNav(filters) {
-    this._mainNavComponent = new MainNavigation(filters);
+  _renderMainNav() {
+    this._mainNavComponent = new MainNavigation(this._filters);
     render(this._boardContainerMain, this._mainNavComponent, RenderPosition.AFTERBEGIN);
   }
 
@@ -183,11 +183,11 @@ class FilmsBoardPresenter {
   }
 
   _renderToplList() {
-    this._renderTopFilms(0, Math.min(this._boardFilms.length, EXTRA_FILMS_COUNT));
+    this._renderTopFilms();
   }
 
   _renderCommentedlList() {
-    this._renderCommentedFilms(0, Math.min(this._boardFilms.length, EXTRA_FILMS_COUNT));
+    this._renderCommentedFilms();
   }
 
   _renderMainList() {
@@ -198,8 +198,8 @@ class FilmsBoardPresenter {
     }
   }
 
-  _renderMainStats(userStats) {
-    this._mainStatsComponent = new MainStatistic(userStats);
+  _renderMainStats() {
+    this._mainStatsComponent = new MainStatistic(this._userStats);
     render(this._boardContainerMain, this._mainStatsComponent, RenderPosition.BEFOREEND);
   }
 

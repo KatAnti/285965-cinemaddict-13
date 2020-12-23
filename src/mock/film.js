@@ -28,11 +28,7 @@ const generateFilm = () => {
     comments,
     isWatchlist: Boolean(getRandomInteger(0, 1)),
     isWatched: Boolean(getRandomInteger(0, 1)),
-    isFavourite: Boolean(getRandomInteger(0, 1)),
-    localReview: {
-      emoji: null,
-      text: null
-    }
+    isFavourite: Boolean(getRandomInteger(0, 1))
   };
 };
 

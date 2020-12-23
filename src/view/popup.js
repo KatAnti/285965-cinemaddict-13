@@ -2,6 +2,8 @@ import SmartView from '../view/smart.js';
 import Comment from '../view/comment.js';
 import {generateComment} from '../mock/comment.js';
 
+const ENTER = `Enter`;
+
 const createComments = (comments) => {
   let template = ``;
   comments.forEach((comment) => {
@@ -185,8 +187,8 @@ class FilmPopup extends SmartView {
   resetLocalComment() {
     this.updateData({
       localReview: {
-        emoji: this._film.localReview.emoji,
-        text: this._film.localReview.text
+        emoji: null,
+        text: null
       }
     }
     );
@@ -260,7 +262,7 @@ class FilmPopup extends SmartView {
   }
 
   _formSubmitHandler(evt) {
-    if (evt.ctrlKey && evt.key === `Enter`) {
+    if ((evt.ctrlKey || evt.metaKey) && evt.key === ENTER) {
       const newComment = generateComment();
       newComment.emoji = this._data.localReview.emoji;
       newComment.message = this._data.localReview.text;
@@ -281,16 +283,23 @@ class FilmPopup extends SmartView {
   static parseFilmToData(film) {
     return Object.assign(
         {},
-        film
+        film,
+        {
+          localReview: {
+            emoji: null,
+            text: null
+          }
+        }
     );
   }
 
   static parseDataToFilm(data) {
     data = Object.assign({}, data);
 
+    delete data.localReview;
+
     return data;
   }
 }
 
 export default FilmPopup;
-
