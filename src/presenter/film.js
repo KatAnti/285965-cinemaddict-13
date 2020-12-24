@@ -1,6 +1,6 @@
 const ESCAPE = `Escape`;
 const ESC = `Esc`;
-import {RenderPosition} from '../const.js';
+import {RenderPosition, PopupMode} from '../const.js';
 import {render, remove, replace} from '../utils/render.js';
 import Film from '../view/film-card.js';
 import FilmPopup from '../view/popup.js';
@@ -9,12 +9,14 @@ const bodyElement = document.querySelector(`body`);
 const mainElement = bodyElement.querySelector(`.main`);
 
 class FilmPresenter {
-  constructor(filmListContainer, changeData) {
+  constructor(filmListContainer, changeData, changePopupMode) {
     this._filmListContainer = filmListContainer;
     this._changeData = changeData;
+    this._changePopupMode = changePopupMode;
 
     this._popupComponent = null;
     this._filmComponent = null;
+    this._popupMode = PopupMode.CLOSE;
 
     this._handlePosterClick = this._handlePosterClick.bind(this);
     this._handleTitleClick = this._handleTitleClick.bind(this);
@@ -46,11 +48,8 @@ class FilmPresenter {
 
     this._setEventHandlers();
 
-    if (this._filmListContainer.contains(prevFilmComponent.getElement())) {
-      replace(this._filmComponent, prevFilmComponent);
-    }
-
-    if (mainElement.contains(prevPopupComponent.getElement())) {
+    replace(this._filmComponent, prevFilmComponent);
+    if (this._popupMode === PopupMode.OPEN) {
       replace(this._popupComponent, prevPopupComponent);
     }
 
@@ -63,6 +62,12 @@ class FilmPresenter {
     remove(this._popupComponent);
   }
 
+  closePopup() {
+    if (this._popupMode !== PopupMode.CLOSE) {
+      this._removePopup();
+    }
+  }
+
   _setEventHandlers() {
     this._filmComponent.setPosterClickHandler(this._handlePosterClick);
     this._filmComponent.setTitleClickHandler(this._handleTitleClick);
@@ -72,10 +77,6 @@ class FilmPresenter {
     this._filmComponent.setWatchedClickHandler(this._handleWatchedClick);
     this._filmComponent.setWatchlistClickHandler(this._handleWatchlistClick);
 
-    this._popupComponent.setFavouriteClickHandler(this._handleFavouriteClick);
-    this._popupComponent.setWatchedClickHandler(this._handleWatchedClick);
-    this._popupComponent.setWatchlistClickHandler(this._handleWatchlistClick);
-
     this._popupComponent.setCloseClickHandler(this._handleCloseButtonClick);
   }
 
@@ -83,6 +84,7 @@ class FilmPresenter {
     mainElement.removeChild(this._popupComponent.getElement());
     bodyElement.classList.remove(`hide-overflow`);
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
+    this._popupMode = PopupMode.CLOSE;
   }
 
   _escKeyDownHandler(evt) {
@@ -93,9 +95,11 @@ class FilmPresenter {
   }
 
   _openPopup() {
+    this._changePopupMode();
     this._renderPopup();
     document.addEventListener(`keydown`, this._escKeyDownHandler);
     bodyElement.classList.add(`hide-overflow`);
+    this._popupMode = PopupMode.OPEN;
   }
 
   _renderPopup() {
@@ -118,7 +122,9 @@ class FilmPresenter {
     this._openPopup();
   }
 
-  _handleCloseButtonClick() {
+  _handleCloseButtonClick(film) {
+    this._changeData(film);
+
     this._removePopup();
   }
 
