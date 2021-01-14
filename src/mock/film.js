@@ -1,13 +1,21 @@
 import {DESCRIPTION, TITLES, DIRECTORS, ACTORS, SCREENWRITERS, COUNTRIES, GENRES, POSTERS} from '../const.js';
 import {getRandomInteger, getRandomItemsAsString} from '../utils/common.js';
 import {generateRandomDate} from '../utils/film.js';
-import {generateComment} from '../mock/comment.js';
+import commentsIds from '../utils/comment.js';
 
 const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
+const existingComments = [];
 
 const generateFilm = () => {
   const COMENTS_COUNT = getRandomInteger(0, 5);
-  const comments = new Array(COMENTS_COUNT).fill().map(generateComment);
+  const comments = [];
+  for (let i = 0; i < COMENTS_COUNT; i++) {
+    const randomId = getRandomInteger(0, commentsIds.length - 1);
+    if (!existingComments.includes(randomId)) {
+      comments.push(randomId);
+      existingComments.push(randomId);
+    }
+  }
   const filmTitle = getRandomItemsAsString(TITLES);
   const generateDescription = getRandomItemsAsString(DESCRIPTION.split(`.`), getRandomInteger(1, DESCRIPTION.split(`.`).length));
   return {

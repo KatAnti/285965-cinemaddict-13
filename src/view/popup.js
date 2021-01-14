@@ -1,8 +1,23 @@
 import SmartView from '../view/smart.js';
 import Comment from '../view/comment.js';
+import commentsIds from '../utils/comment.js';
 import {generateComment} from '../mock/comment.js';
 
 const ENTER = `Enter`;
+
+const findComments = (ids, comments) => {
+  const filmComments = [];
+  ids.forEach((id) => {
+    const comentData = comments.filter((comment) => {
+      return id === comment.id;
+    });
+    if (comentData[0]) {
+      filmComments.push(comentData[0]);
+    }
+  });
+
+  return filmComments;
+};
 
 const createComments = (comments) => {
   let template = ``;
@@ -20,7 +35,7 @@ const createGenres = (genres) => {
   return template;
 };
 
-const createFilmPopup = (data) => {
+const createFilmPopup = (data, commentsData) => {
   const {title,
     originalTitle,
     poster,
@@ -42,10 +57,9 @@ const createFilmPopup = (data) => {
 
   const genresTitle = genres.split(`,`).length > 1 ? `Genres` : `Genre`;
   const genresList = createGenres(genres);
-  const commentsList = createComments(comments);
+  const commentsList = createComments(findComments(comments, commentsData));
   const emojiIcon = localReview.emoji ? `<img src=${localReview.emoji} width="55" height="55">` : ``;
   const commentText = localReview.text ? localReview.text : ``;
-
 
   return `<section class="film-details">
       <form class="film-details__inner" action="" method="get">
@@ -164,9 +178,10 @@ const createFilmPopup = (data) => {
 };
 
 class FilmPopup extends SmartView {
-  constructor(film) {
+  constructor(film, comments) {
     super();
     this._film = film;
+    this._comments = comments;
     this._data = FilmPopup.parseFilmToData(film);
 
     this._closeClickHandler = this._closeClickHandler.bind(this);
@@ -176,12 +191,13 @@ class FilmPopup extends SmartView {
     this._emojiChangeHandler = this._emojiChangeHandler.bind(this);
     this._commentTextareaHandler = this._commentTextareaHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._deleteClickHandler = this._deleteClickHandler.bind(this);
 
-    this._setInnerHandlers();
+    this.restoreHandlers();
   }
 
   getTemplate() {
-    return createFilmPopup(this._data);
+    return createFilmPopup(this._data, this._comments);
   }
 
   resetLocalComment() {
@@ -197,6 +213,8 @@ class FilmPopup extends SmartView {
   restoreHandlers() {
     this._setInnerHandlers();
     this.setCloseClickHandler(this._callback.closeClick);
+    this.setFormSubmitHandler(this._callback.submitForm);
+    this.setDeleteClickHandler(this._callback.deleteClick);
   }
 
   _setInnerHandlers() {
@@ -205,14 +223,6 @@ class FilmPopup extends SmartView {
     this.getElement().querySelector(`.film-details__control-label--favorite`).addEventListener(`click`, this._favouriteClickHandler);
     this.getElement().querySelector(`.film-details__emoji-list`).addEventListener(`click`, this._emojiChangeHandler);
     this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`input`, this._commentTextareaHandler);
-    this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`keydown`, this._formSubmitHandler);
-  }
-
-  _closeClickHandler(evt) {
-    evt.preventDefault();
-
-    this.resetLocalComment();
-    this._callback.closeClick(FilmPopup.parseDataToFilm(this._data));
   }
 
   _favouriteClickHandler(evt) {
@@ -261,23 +271,65 @@ class FilmPopup extends SmartView {
     }, true);
   }
 
+  _closeClickHandler(evt) {
+    evt.preventDefault();
+
+    this.resetLocalComment();
+    this._callback.closeClick(FilmPopup.parseDataToFilm(this._data));
+  }
+
+  _deleteClickHandler(evt) {
+    evt.preventDefault();
+    const commentId = Number(evt.target.closest(`li`).id);
+    const commentToDelete = this._comments.filter((comment) => {
+      return comment.id === commentId;
+    })[0];
+
+    this.updateData({
+      comments: this._data.comments.filter((comment) => {
+        return comment !== commentId;
+      })
+    });
+
+    this._callback.deleteClick(FilmPopup.parseDataToFilm(this._data), commentToDelete);
+  }
+
   _formSubmitHandler(evt) {
     if ((evt.ctrlKey || evt.metaKey) && evt.key === ENTER) {
       const newComment = generateComment();
       newComment.emoji = this._data.localReview.emoji;
       newComment.message = this._data.localReview.text;
-      this._data.comments.push(newComment);
+      newComment.id = commentsIds.length;
+      commentsIds.push(newComment.id);
+      this._data.comments.push(newComment.id);
 
       this.updateData({
         comments: this._data.comments
       });
+
       this.resetLocalComment();
+
+      this._callback.submitForm(FilmPopup.parseDataToFilm(this._data), newComment);
     }
   }
 
   setCloseClickHandler(callback) {
     this._callback.closeClick = callback;
     this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, this._closeClickHandler);
+  }
+
+  setFormSubmitHandler(callback) {
+    this._callback.submitForm = callback;
+    this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`keydown`, this._formSubmitHandler);
+  }
+
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
+    if (this.getElement().querySelector(`.film-details__comment-delete`)) {
+      this.getElement().querySelectorAll(`.film-details__comment-delete`).forEach((deleteButton) => {
+        deleteButton.addEventListener(`click`, this._deleteClickHandler);
+      });
+    }
   }
 
   static parseFilmToData(film) {

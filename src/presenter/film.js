@@ -1,6 +1,6 @@
 const ESCAPE = `Escape`;
 const ESC = `Esc`;
-import {RenderPosition, PopupMode} from '../const.js';
+import {RenderPosition, PopupMode, UserAction, UpdateType} from '../const.js';
 import {render, remove, replace} from '../utils/render.js';
 import Film from '../view/film-card.js';
 import FilmPopup from '../view/popup.js';
@@ -9,10 +9,11 @@ const bodyElement = document.querySelector(`body`);
 const mainElement = bodyElement.querySelector(`.main`);
 
 class FilmPresenter {
-  constructor(filmListContainer, changeData, changePopupMode) {
+  constructor(filmListContainer, changeData, changePopupMode, commentsModel) {
     this._filmListContainer = filmListContainer;
     this._changeData = changeData;
     this._changePopupMode = changePopupMode;
+    this._commentsModel = commentsModel;
 
     this._popupComponent = null;
     this._filmComponent = null;
@@ -22,6 +23,8 @@ class FilmPresenter {
     this._handleTitleClick = this._handleTitleClick.bind(this);
     this._handleCommentsClick = this._handleCommentsClick.bind(this);
     this._handleCloseButtonClick = this._handleCloseButtonClick.bind(this);
+    this._handleDeleteButtonClick = this._handleDeleteButtonClick.bind(this);
+    this._handleSubmitForm = this._handleSubmitForm.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
 
     this._handleFavouriteClick = this._handleFavouriteClick.bind(this);
@@ -32,10 +35,14 @@ class FilmPresenter {
   init(film) {
     this._film = film;
     this._filmComponent = new Film(film);
-    this._popupComponent = new FilmPopup(film);
+    this._popupComponent = new FilmPopup(film, this._getComments());
 
     this._setEventHandlers();
     this._renderFilmCard();
+  }
+
+  _getComments() {
+    return this._commentsModel.getComments();
   }
 
   update(newFilm) {
@@ -44,13 +51,15 @@ class FilmPresenter {
 
     this._film = newFilm;
     this._filmComponent = new Film(newFilm);
-    this._popupComponent = new FilmPopup(newFilm);
+    this._popupComponent = new FilmPopup(newFilm, this._getComments());
 
     this._setEventHandlers();
 
     replace(this._filmComponent, prevFilmComponent);
     if (this._popupMode === PopupMode.OPEN) {
+      let scroll = prevPopupComponent.getElement().scrollTop;
       replace(this._popupComponent, prevPopupComponent);
+      this._popupComponent.getElement().scrollTop = scroll;
     }
 
     remove(prevFilmComponent);
@@ -78,6 +87,8 @@ class FilmPresenter {
     this._filmComponent.setWatchlistClickHandler(this._handleWatchlistClick);
 
     this._popupComponent.setCloseClickHandler(this._handleCloseButtonClick);
+    this._popupComponent.setDeleteClickHandler(this._handleDeleteButtonClick);
+    this._popupComponent.setFormSubmitHandler(this._handleSubmitForm);
   }
 
   _removePopup() {
@@ -123,13 +134,24 @@ class FilmPresenter {
   }
 
   _handleCloseButtonClick(film) {
-    this._changeData(film);
-
     this._removePopup();
+    this._changeData(UserAction.UPDATE_FILM, UpdateType.MINOR, film);
+  }
+
+  _handleDeleteButtonClick(film, comment) {
+    this._commentsModel.deleteComment(UpdateType.COMMENTS, comment);
+    this._changeData(UserAction.DELETE_COMMENT, UpdateType.PATCH, film);
+  }
+
+  _handleSubmitForm(film, comment) {
+    this._commentsModel.addComment(UpdateType.COMMENTS, comment);
+    this._changeData(UserAction.ADD_COMMENT, UpdateType.PATCH, film);
   }
 
   _handleFavouriteClick() {
     this._changeData(
+        UserAction.UPDATE_FILM,
+        UpdateType.PATCH,
         Object.assign(
             {},
             this._film,
@@ -142,6 +164,8 @@ class FilmPresenter {
 
   _handleWatchedClick() {
     this._changeData(
+        UserAction.UPDATE_FILM,
+        UpdateType.MINOR,
         Object.assign(
             {},
             this._film,
@@ -154,6 +178,8 @@ class FilmPresenter {
 
   _handleWatchlistClick() {
     this._changeData(
+        UserAction.UPDATE_FILM,
+        UpdateType.PATCH,
         Object.assign(
             {},
             this._film,
