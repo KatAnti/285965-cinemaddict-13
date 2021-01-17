@@ -19,12 +19,11 @@ const EXTRA_FILMS_COUNT = 2;
 
 
 class FilmsBoardPresenter {
-  constructor(boardContainer, filmsModel, comentsModel, filterModel) {
+  constructor(boardContainer, filmsModel, filterModel) {
     this._boardFilms = null;
     this._filters = null;
     this._userStats = null;
     this._filmsModel = filmsModel;
-    this._comentsModel = comentsModel;
     this._filterModel = filterModel;
     this._boardContainer = boardContainer;
     this._boardContainerHeader = boardContainer.querySelector(`.header`);
@@ -66,7 +65,6 @@ class FilmsBoardPresenter {
     render(this._filmBoardComponent, this._commentedListComponent, RenderPosition.BEFOREEND);
 
     this._filmsModel.addObserver(this._handleModelEvent);
-    this._comentsModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
 
     this._renderBoard();

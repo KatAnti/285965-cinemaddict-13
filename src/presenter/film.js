@@ -9,11 +9,10 @@ const bodyElement = document.querySelector(`body`);
 const mainElement = bodyElement.querySelector(`.main`);
 
 class FilmPresenter {
-  constructor(filmListContainer, changeData, changePopupMode, commentsModel) {
+  constructor(filmListContainer, changeData, changePopupMode) {
     this._filmListContainer = filmListContainer;
     this._changeData = changeData;
     this._changePopupMode = changePopupMode;
-    this._commentsModel = commentsModel;
 
     this._popupComponent = null;
     this._filmComponent = null;
@@ -35,14 +34,10 @@ class FilmPresenter {
   init(film) {
     this._film = film;
     this._filmComponent = new Film(film);
-    this._popupComponent = new FilmPopup(film, this._getComments());
+    this._popupComponent = new FilmPopup(film);
 
     this._setEventHandlers();
     this._renderFilmCard();
-  }
-
-  _getComments() {
-    return this._commentsModel.getComments();
   }
 
   update(newFilm) {
@@ -51,7 +46,7 @@ class FilmPresenter {
 
     this._film = newFilm;
     this._filmComponent = new Film(newFilm);
-    this._popupComponent = new FilmPopup(newFilm, this._getComments());
+    this._popupComponent = new FilmPopup(newFilm);
 
     this._setEventHandlers();
 
@@ -138,13 +133,11 @@ class FilmPresenter {
     this._changeData(UserAction.UPDATE_FILM, UpdateType.MINOR, film);
   }
 
-  _handleDeleteButtonClick(film, comment) {
-    this._commentsModel.deleteComment(UpdateType.COMMENTS, comment);
+  _handleDeleteButtonClick(film) {
     this._changeData(UserAction.DELETE_COMMENT, UpdateType.PATCH, film);
   }
 
-  _handleSubmitForm(film, comment) {
-    this._commentsModel.addComment(UpdateType.COMMENTS, comment);
+  _handleSubmitForm(film) {
     this._changeData(UserAction.ADD_COMMENT, UpdateType.PATCH, film);
   }
 

@@ -1,9 +1,8 @@
 import {getRandomItemsAsString} from '../utils/common.js';
 import {generateCommentDate} from '../utils/film.js';
-import commentsIds from '../utils/comment.js';
 import {EMOJI, USERS, DESCRIPTION} from '../const.js';
 
-let commentId = 0;
+const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
 
 const generateComment = () => {
   return {
@@ -11,7 +10,7 @@ const generateComment = () => {
     emoji: getRandomItemsAsString(EMOJI),
     date: generateCommentDate(),
     message: getRandomItemsAsString(DESCRIPTION.split(`.`)),
-    id: commentsIds[commentId++]
+    id: generateId()
   };
 };
 

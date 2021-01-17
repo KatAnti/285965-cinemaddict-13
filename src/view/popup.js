@@ -1,23 +1,11 @@
 import SmartView from '../view/smart.js';
 import Comment from '../view/comment.js';
-import commentsIds from '../utils/comment.js';
 import {generateComment} from '../mock/comment.js';
+import {UserAction} from '../const.js';
 
 const ENTER = `Enter`;
 
-const findComments = (ids, comments) => {
-  const filmComments = [];
-  ids.forEach((id) => {
-    const comentData = comments.filter((comment) => {
-      return id === comment.id;
-    });
-    if (comentData[0]) {
-      filmComments.push(comentData[0]);
-    }
-  });
-
-  return filmComments;
-};
+const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
 
 const createComments = (comments) => {
   let template = ``;
@@ -35,7 +23,7 @@ const createGenres = (genres) => {
   return template;
 };
 
-const createFilmPopup = (data, commentsData) => {
+const createFilmPopup = (data) => {
   const {title,
     originalTitle,
     poster,
@@ -57,7 +45,7 @@ const createFilmPopup = (data, commentsData) => {
 
   const genresTitle = genres.split(`,`).length > 1 ? `Genres` : `Genre`;
   const genresList = createGenres(genres);
-  const commentsList = createComments(findComments(comments, commentsData));
+  const commentsList = createComments(comments.getComments());
   const emojiIcon = localReview.emoji ? `<img src=${localReview.emoji} width="55" height="55">` : ``;
   const commentText = localReview.text ? localReview.text : ``;
 
@@ -138,7 +126,7 @@ const createFilmPopup = (data, commentsData) => {
 
         <div class="film-details__bottom-container">
         <section class="film-details__comments-wrap">
-        <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
+        <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.getComments().length}</span></h3>
 
         <ul class="film-details__comments-list">${commentsList}</ul>
 
@@ -178,10 +166,9 @@ const createFilmPopup = (data, commentsData) => {
 };
 
 class FilmPopup extends SmartView {
-  constructor(film, comments) {
+  constructor(film) {
     super();
     this._film = film;
-    this._comments = comments;
     this._data = FilmPopup.parseFilmToData(film);
 
     this._closeClickHandler = this._closeClickHandler.bind(this);
@@ -194,6 +181,7 @@ class FilmPopup extends SmartView {
     this._deleteClickHandler = this._deleteClickHandler.bind(this);
 
     this.restoreHandlers();
+    this._commentsModel = this._data.comments;
   }
 
   getTemplate() {
@@ -281,17 +269,8 @@ class FilmPopup extends SmartView {
   _deleteClickHandler(evt) {
     evt.preventDefault();
     const commentId = Number(evt.target.closest(`li`).id);
-    const commentToDelete = this._comments.filter((comment) => {
-      return comment.id === commentId;
-    })[0];
-
-    this.updateData({
-      comments: this._data.comments.filter((comment) => {
-        return comment !== commentId;
-      })
-    });
-
-    this._callback.deleteClick(FilmPopup.parseDataToFilm(this._data), commentToDelete);
+    this._commentsModel.deleteComment(UserAction.PATCH, commentId);
+    this._callback.deleteClick(FilmPopup.parseDataToFilm(this._data));
   }
 
   _formSubmitHandler(evt) {
@@ -299,13 +278,9 @@ class FilmPopup extends SmartView {
       const newComment = generateComment();
       newComment.emoji = this._data.localReview.emoji;
       newComment.message = this._data.localReview.text;
-      newComment.id = commentsIds.length;
-      commentsIds.push(newComment.id);
-      this._data.comments.push(newComment.id);
+      newComment.id = generateId();
 
-      this.updateData({
-        comments: this._data.comments
-      });
+      this._commentsModel.addComment(UserAction.PATCH, newComment);
 
       this.resetLocalComment();
 
