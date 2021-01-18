@@ -4,7 +4,7 @@ import {isPropertyActive} from '../utils/film.js';
 
 const createFilmCard = (film) => {
   const mainGenre = film.genres.split(`,`)[0];
-  const commentsAmount = `${film.comments.length} comments`;
+  const commentsAmount = `${film.comments.getComments().length} comments`;
   const shortDescription = film.description.length > 140 ? film.description.slice(0, 138) + `...` : film.description;
   const isFilmOnWatchlist = isPropertyActive(film.isWatchlist);
   const isFilmMarkedAsWatched = isPropertyActive(film.isWatched);

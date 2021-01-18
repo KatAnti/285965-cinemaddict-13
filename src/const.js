@@ -112,6 +112,7 @@ ranks.set(20, `Fan`);
 ranks.set(`more`, `Movie Buff`);
 
 const FILMS_COUNT = 25;
+const COMMENTS_COUNT = 55;
 
 const RenderPosition = {
   AFTERBEGIN: `afterbegin`,
@@ -134,4 +135,24 @@ const PopupMode = {
   CLOSE: `CLOSE`
 };
 
-export {DESCRIPTION, TITLES, DIRECTORS, ACTORS, SCREENWRITERS, COUNTRIES, GENRES, POSTERS, EMOJI, USERS, FILMS_COUNT, ranks, ListsTitles, ListsType, RenderPosition, SortType, PopupMode};
+const UserAction = {
+  UPDATE_FILM: `UPDATE_FILM`,
+  ADD_COMMENT: `ADD_COMMENT`,
+  DELETE_COMMENT: `DELETE_COMMENT`
+};
+
+const UpdateType = {
+  PATCH: `PATCH`,
+  MINOR: `MINOR`,
+  MAJOR: `MAJOR`
+};
+
+const FilterType = {
+  ALL: `all`,
+  WATCHED: `watched`,
+  WATCHLIST: `watchlist`,
+  FAVORITES: `favorites`
+};
+
+export {DESCRIPTION, TITLES, DIRECTORS, ACTORS, SCREENWRITERS, COUNTRIES, GENRES, POSTERS, EMOJI, USERS, FILMS_COUNT, COMMENTS_COUNT, ranks,
+  ListsTitles, ListsType, RenderPosition, SortType, PopupMode, UserAction, UpdateType, FilterType};

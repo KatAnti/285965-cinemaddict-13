@@ -2,6 +2,7 @@ import {DESCRIPTION, TITLES, DIRECTORS, ACTORS, SCREENWRITERS, COUNTRIES, GENRES
 import {getRandomInteger, getRandomItemsAsString} from '../utils/common.js';
 import {generateRandomDate} from '../utils/film.js';
 import {generateComment} from '../mock/comment.js';
+import CommentsModel from '../model/comments.js';
 
 const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
 
@@ -10,6 +11,9 @@ const generateFilm = () => {
   const comments = new Array(COMENTS_COUNT).fill().map(generateComment);
   const filmTitle = getRandomItemsAsString(TITLES);
   const generateDescription = getRandomItemsAsString(DESCRIPTION.split(`.`), getRandomInteger(1, DESCRIPTION.split(`.`).length));
+  const commentsModel = new CommentsModel();
+  commentsModel.setComments(comments);
+
   return {
     id: generateId(),
     title: filmTitle,
@@ -25,7 +29,7 @@ const generateFilm = () => {
     country: getRandomItemsAsString(COUNTRIES),
     genres: getRandomItemsAsString(GENRES, getRandomInteger(1, 3), `,`),
     ageRestriction: `${getRandomInteger(0, 18)}+`,
-    comments,
+    comments: commentsModel,
     isWatchlist: Boolean(getRandomInteger(0, 1)),
     isWatched: Boolean(getRandomInteger(0, 1)),
     isFavourite: Boolean(getRandomInteger(0, 1))

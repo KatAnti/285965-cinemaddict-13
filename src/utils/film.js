@@ -36,7 +36,7 @@ const sortByRating = (prevFilm, nextFilm) => {
 };
 
 const sortByCommentsAmount = (prevFilm, nextFilm) => {
-  return nextFilm.comments.length - prevFilm.comments.length;
+  return nextFilm.comments.getComments().length - prevFilm.comments.getComments().length;
 };
 
 export {isPropertyActive, generateRandomDate, generateCommentDate, sortByDate, sortByRating, sortByCommentsAmount};
