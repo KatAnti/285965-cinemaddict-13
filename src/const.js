@@ -142,7 +142,6 @@ const UserAction = {
 };
 
 const UpdateType = {
-  COMMENTS: `COMMENTS`,
   PATCH: `PATCH`,
   MINOR: `MINOR`,
   MAJOR: `MAJOR`

@@ -1,7 +1,6 @@
 import SmartView from '../view/smart.js';
 import Comment from '../view/comment.js';
 import {generateComment} from '../mock/comment.js';
-import {UserAction} from '../const.js';
 
 const ENTER = `Enter`;
 
@@ -269,8 +268,7 @@ class FilmPopup extends SmartView {
   _deleteClickHandler(evt) {
     evt.preventDefault();
     const commentId = Number(evt.target.closest(`li`).id);
-    this._commentsModel.deleteComment(UserAction.PATCH, commentId);
-    this._callback.deleteClick(FilmPopup.parseDataToFilm(this._data));
+    this._callback.deleteClick(FilmPopup.parseDataToFilm(this._data), commentId);
   }
 
   _formSubmitHandler(evt) {
@@ -279,8 +277,6 @@ class FilmPopup extends SmartView {
       newComment.emoji = this._data.localReview.emoji;
       newComment.message = this._data.localReview.text;
       newComment.id = generateId();
-
-      this._commentsModel.addComment(UserAction.PATCH, newComment);
 
       this.resetLocalComment();
 

@@ -100,8 +100,6 @@ class FilmsBoardPresenter {
 
   _handleModelEvent(updateType, update) {
     switch (updateType) {
-      case UpdateType.COMMENTS:
-        break;
       case UpdateType.PATCH:
         this._updateCurrentFilm(update);
         break;
@@ -143,7 +141,7 @@ class FilmsBoardPresenter {
   }
 
   _renderFilm(film, container) {
-    const filmPresenter = new FilmPresenter(container, this._handleViewAction, this._handlePopupModeChange, this._comentsModel);
+    const filmPresenter = new FilmPresenter(container, this._handleViewAction, this._handlePopupModeChange);
     filmPresenter.init(film);
     if (!this._filmPresenter[film.id]) {
       this._filmPresenter[film.id] = [filmPresenter];
