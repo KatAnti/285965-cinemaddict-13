@@ -1,21 +1,22 @@
 import dayjs from 'dayjs';
 import AbstractView from '../view/abstract.js';
-import {isPropertyActive} from '../utils/film.js';
+import {isPropertyActive, calculateDurationInHours} from '../utils/film.js';
 
 const createFilmCard = (film) => {
-  const mainGenre = film.genres.split(`,`)[0];
+  const mainGenre = film.genres[0];
   const commentsAmount = `${film.comments.getComments().length} comments`;
   const shortDescription = film.description.length > 140 ? film.description.slice(0, 138) + `...` : film.description;
   const isFilmOnWatchlist = isPropertyActive(film.isWatchlist);
   const isFilmMarkedAsWatched = isPropertyActive(film.isWatched);
   const isFilmFavourite = isPropertyActive(film.isFavourite);
+  const duration = calculateDurationInHours(film.duration);
 
   return `<article class="film-card">
       <h3 class="film-card__title">${film.title}</h3>
       <p class="film-card__rating">${film.rating}</p>
       <p class="film-card__info">
         <span class="film-card__year">${dayjs(film.releaseDate).get(`year`)}</span>
-        <span class="film-card__duration">${film.duration}</span>
+        <span class="film-card__duration">${duration}</span>
         <span class="film-card__genre">${mainGenre}</span>
       </p>
       <img src="${film.poster}" alt="" class="film-card__poster">

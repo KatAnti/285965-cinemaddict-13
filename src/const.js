@@ -111,10 +111,11 @@ ranks.set(10, `Novice`);
 ranks.set(20, `Fan`);
 ranks.set(`more`, `Movie Buff`);
 
-const FILMS_COUNT = 25;
+const FILMS_COUNT = 45;
 const COMMENTS_COUNT = 55;
 
 const RenderPosition = {
+  AFTER: `after`,
   AFTERBEGIN: `afterbegin`,
   BEFOREEND: `beforeend`
 };
@@ -154,5 +155,18 @@ const FilterType = {
   FAVORITES: `favorites`
 };
 
+const ScreenMode = {
+  STATS: `STATS`,
+  FILMS: `FILMS`
+};
+
+const TimePeriod = {
+  ALL: `ALL`,
+  TODAY: `TODAY`,
+  WEEK: `WEEK`,
+  MONTH: `MONTH`,
+  YEAR: `YEAR`
+};
+
 export {DESCRIPTION, TITLES, DIRECTORS, ACTORS, SCREENWRITERS, COUNTRIES, GENRES, POSTERS, EMOJI, USERS, FILMS_COUNT, COMMENTS_COUNT, ranks,
-  ListsTitles, ListsType, RenderPosition, SortType, PopupMode, UserAction, UpdateType, FilterType};
+  ListsTitles, ListsType, RenderPosition, SortType, PopupMode, UserAction, UpdateType, FilterType, ScreenMode, TimePeriod};

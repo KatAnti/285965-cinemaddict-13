@@ -17,6 +17,9 @@ const render = (container, child, place) => {
     case RenderPosition.BEFOREEND:
       container.append(child);
       break;
+    case RenderPosition.AFTER:
+      container.after(child);
+      break;
   }
 };
 
