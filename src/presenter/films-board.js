@@ -7,10 +7,11 @@ import FilterPresenter from './filter.js';
 import SortBy from '../view/sorting.js';
 import FooterStatistic from '../view/footer-statistics.js';
 import UserRank from '../view/user-rank.js';
+import MainNavigation from '../view/main-nav.js';
 import MainStatistic from '../view/main-statistics.js';
 import filter from "../utils/filters.js";
 import {generateUserStats} from "../mock/user-stats.js";
-import {ListsTitles, ListsType, RenderPosition, SortType, UserAction, UpdateType} from '../const.js';
+import {ListsTitles, ListsType, RenderPosition, SortType, UserAction, UpdateType, ScreenMode} from '../const.js';
 import {render, remove} from '../utils/render.js';
 import {sortByDate, sortByRating, sortByCommentsAmount} from '../utils/film.js';
 
@@ -32,22 +33,23 @@ class FilmsBoardPresenter {
     this._renderedFilmsCount = FILMS_COUNT_PER_STEP;
     this._filmPresenter = {};
     this._currentSortType = SortType.DEFAULT;
+    this._currentScreenMode = ScreenMode.FILMS;
 
     this._sortComponent = null;
     this._showMoreButtonComponent = null;
 
     this._userRankComponent = null;
-    this._filmBoardComponent = new FilmsBoard();
+    this._filmBoardComponent = new FilmsBoard(this._currentScreenMode);
     this._mainNavComponent = null;
     this._noFilmsComponent = new NoFilms();
     this._mainListComponent = new FilmsList(ListsTitles.MAIN, ListsType.MAIN);
     this._topListComponent = new FilmsList(ListsTitles.TOP, ListsType.ADDITIONAL);
     this._commentedListComponent = new FilmsList(ListsTitles.MOST_COMMENTED, ListsType.ADDITIONAL);
     this._footerStatsComponent = new FooterStatistic();
-    this._filterPresenter = new FilterPresenter(this._boardContainerMain, this._filterModel, this._filmsModel);
     this._mainStatsComponent = null;
 
     this._handleShowMoreButtonClick = this._handleShowMoreButtonClick.bind(this);
+    this._handleStatsButtonClick = this._handleStatsButtonClick.bind(this);
 
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
@@ -57,6 +59,8 @@ class FilmsBoardPresenter {
   }
 
   init() {
+    this._renderMainNav();
+    this._filterPresenter = new FilterPresenter(this._mainNavComponent, this._filterModel, this._filmsModel);
     this._filterPresenter.init();
     this._userStats = generateUserStats(this._filmsModel.getFilms());
     render(this._boardContainerMain, this._filmBoardComponent, RenderPosition.BEFOREEND);
@@ -108,6 +112,7 @@ class FilmsBoardPresenter {
         this._renderBoard();
         break;
       case UpdateType.MAJOR:
+        this._currentScreenMode = ScreenMode.FILMS;
         this._clearBoard({resetRenderedFilmCount: true, resetSortType: true});
         this._renderBoard();
         break;
@@ -163,6 +168,13 @@ class FilmsBoardPresenter {
     }
   }
 
+  _handleStatsButtonClick() {
+    this._filmBoardComponent.hide();
+    this._sortComponent.hide();
+    this._mainStatsComponent.show();
+    this._currentScreenMode = ScreenMode.STATS;
+  }
+
   _renderShowMoreButton() {
     if (this._showMoreButtonComponent !== null) {
       this._showMoreButtonComponent = null;
@@ -199,6 +211,12 @@ class FilmsBoardPresenter {
     render(this._boardContainerHeader, this._userRankComponent, RenderPosition.BEFOREEND);
   }
 
+  _renderMainNav() {
+    this._mainNavComponent = new MainNavigation(this._currentScreenMode);
+    this._mainNavComponent.setStatsClickHandler(this._handleStatsButtonClick);
+    render(this._boardContainerMain, this._mainNavComponent, RenderPosition.BEFOREEND);
+  }
+
   _renderSort() {
     if (this._sortComponent !== null) {
       this._sortComponent = null;
@@ -206,7 +224,7 @@ class FilmsBoardPresenter {
 
     this._sortComponent = new SortBy(this._currentSortType);
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
-    render(this._boardContainerMain, this._sortComponent, RenderPosition.AFTERBEGIN);
+    render(this._mainNavComponent, this._sortComponent, RenderPosition.AFTER);
   }
 
   _renderToplList() {
@@ -218,7 +236,7 @@ class FilmsBoardPresenter {
   }
 
   _renderMainStats() {
-    this._mainStatsComponent = new MainStatistic(this._userStats);
+    this._mainStatsComponent = new MainStatistic(this._filmsModel.getFilms());
     render(this._boardContainerMain, this._mainStatsComponent, RenderPosition.BEFOREEND);
   }
 
@@ -258,8 +276,8 @@ class FilmsBoardPresenter {
       return;
     }
 
-    this._renderUserRank();
     this._renderSort();
+    this._renderUserRank();
     this._renderToplList();
     this._renderCommentedlList();
     this._renderFooterStats();
@@ -269,6 +287,11 @@ class FilmsBoardPresenter {
 
     if (filmCount > this._renderedFilmsCount) {
       this._renderShowMoreButton();
+    }
+
+    if (this._currentScreenMode === ScreenMode.FILMS) {
+      this._filmBoardComponent.getElement().classList.remove(`visually-hidden`);
+      this._mainNavComponent.getStatsButton().classList.remove(`main-navigation__item--active`);
     }
   }
 

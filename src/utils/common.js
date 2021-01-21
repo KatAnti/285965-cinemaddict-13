@@ -2,6 +2,17 @@ const getRandomInteger = (a = 0, b = 1) => {
   return Math.floor(a + Math.random() * (b + 1 - a));
 };
 
+const getRandomArray = (array, count) => {
+  let result = [];
+  for (let i = 0; i < count; i++) {
+    const randomIndex = getRandomInteger(0, array.length - 1);
+    if (!result.includes(array[randomIndex])) {
+      result.push(array[randomIndex]);
+    }
+  }
+  return result;
+};
+
 const getRandomItemsAsString = (array, amount = 1, separator) => {
   if (amount === 1) {
     return array[getRandomInteger(0, array.length - 1)];
@@ -32,4 +43,4 @@ const updateItem = (items, update) => {
   ];
 };
 
-export {getRandomInteger, getRandomItemsAsString, updateItem};
+export {getRandomInteger, getRandomItemsAsString, updateItem, getRandomArray};

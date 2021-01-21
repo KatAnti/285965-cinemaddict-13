@@ -1,5 +1,8 @@
+import dayjs from 'dayjs';
+import dayjsRandom from 'dayjs-random';
+dayjs.extend(dayjsRandom);
 import {DESCRIPTION, TITLES, DIRECTORS, ACTORS, SCREENWRITERS, COUNTRIES, GENRES, POSTERS} from '../const.js';
-import {getRandomInteger, getRandomItemsAsString} from '../utils/common.js';
+import {getRandomInteger, getRandomItemsAsString, getRandomArray} from '../utils/common.js';
 import {generateRandomDate} from '../utils/film.js';
 import {generateComment} from '../mock/comment.js';
 import CommentsModel from '../model/comments.js';
@@ -25,14 +28,15 @@ const generateFilm = () => {
     actors: getRandomItemsAsString(ACTORS, getRandomInteger(1, 3), `,`),
     screenwriters: getRandomItemsAsString(SCREENWRITERS, getRandomInteger(1, 3), `,`),
     releaseDate: generateRandomDate(),
-    duration: `${getRandomInteger(1, 4)}h ${getRandomInteger(1, 59)}m`,
+    duration: getRandomInteger(40, 180),
     country: getRandomItemsAsString(COUNTRIES),
-    genres: getRandomItemsAsString(GENRES, getRandomInteger(1, 3), `,`),
+    genres: getRandomArray(GENRES, getRandomInteger(1, 3)),
     ageRestriction: `${getRandomInteger(0, 18)}+`,
     comments: commentsModel,
     isWatchlist: Boolean(getRandomInteger(0, 1)),
     isWatched: Boolean(getRandomInteger(0, 1)),
-    isFavourite: Boolean(getRandomInteger(0, 1))
+    isFavourite: Boolean(getRandomInteger(0, 1)),
+    watchingDate: dayjs.between(dayjs().year(2020).toDate(), dayjs().toDate())
   };
 };
 

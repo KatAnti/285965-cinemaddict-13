@@ -39,4 +39,19 @@ const sortByCommentsAmount = (prevFilm, nextFilm) => {
   return nextFilm.comments.getComments().length - prevFilm.comments.getComments().length;
 };
 
-export {isPropertyActive, generateRandomDate, generateCommentDate, sortByDate, sortByRating, sortByCommentsAmount};
+const calculateDurationInHours = (minutes, isStatistic) => {
+  if (minutes >= 60 && minutes % 60) {
+    return isStatistic
+      ? `${Math.floor(minutes / 60)} <span class="statistic__item-description">h</span> ${minutes % 60} <span class="statistic__item-description">m</span>`
+      : `${Math.floor(minutes / 60)}h ${minutes % 60}m`;
+  } else if (minutes >= 60 && !(minutes % 60)) {
+    return isStatistic
+      ? `${Math.floor(minutes / 60)} <span class="statistic__item-description">h</span>`
+      : `${Math.floor(minutes / 60)}h`;
+  }
+  return isStatistic
+    ? `${minutes} <span class="statistic__item-description">m</span>`
+    : `${minutes}m`;
+};
+
+export {isPropertyActive, generateRandomDate, generateCommentDate, sortByDate, sortByRating, sortByCommentsAmount, calculateDurationInHours};

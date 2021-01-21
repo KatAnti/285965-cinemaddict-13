@@ -1,5 +1,6 @@
 import SmartView from '../view/smart.js';
 import Comment from '../view/comment.js';
+import {calculateDurationInHours} from '../utils/film.js';
 import {generateComment} from '../mock/comment.js';
 
 const ENTER = `Enter`;
@@ -16,7 +17,7 @@ const createComments = (comments) => {
 
 const createGenres = (genres) => {
   let template = ``;
-  genres.split(`,`).forEach((genre) => {
+  genres.forEach((genre) => {
     template += `<span class="film-details__genre">${genre}</span>`;
   });
   return template;
@@ -42,11 +43,12 @@ const createFilmPopup = (data) => {
     isFavourite,
     localReview} = data;
 
-  const genresTitle = genres.split(`,`).length > 1 ? `Genres` : `Genre`;
+  const genresTitle = genres.length > 1 ? `Genres` : `Genre`;
   const genresList = createGenres(genres);
   const commentsList = createComments(comments.getComments());
   const emojiIcon = localReview.emoji ? `<img src=${localReview.emoji} width="55" height="55">` : ``;
   const commentText = localReview.text ? localReview.text : ``;
+  const durationTime = calculateDurationInHours(duration);
 
   return `<section class="film-details">
       <form class="film-details__inner" action="" method="get">
@@ -92,7 +94,7 @@ const createFilmPopup = (data) => {
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Runtime</td>
-                  <td class="film-details__cell">${duration}</td>
+                  <td class="film-details__cell">${durationTime}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Country</td>

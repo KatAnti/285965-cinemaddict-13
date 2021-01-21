@@ -1,4 +1,4 @@
-import MainNavigation from "../view/main-nav.js";
+import Filters from "../view/filters.js";
 import {render, replace, remove} from "../utils/render.js";
 import filter from "../utils/filters.js";
 import {FilterType, UpdateType, RenderPosition} from "../const.js";
@@ -25,7 +25,7 @@ class FilterPresenter {
     const filters = this._getFilters();
     const prevFilterComponent = this._filterComponent;
 
-    this._filterComponent = new MainNavigation(filters, this._currentFilter);
+    this._filterComponent = new Filters(filters, this._currentFilter);
     this._filterComponent.setFilterTypeChangeHandler(this._handleFilterTypeChange);
 
     if (prevFilterComponent === null) {
@@ -35,6 +35,10 @@ class FilterPresenter {
 
     replace(this._filterComponent, prevFilterComponent);
     remove(prevFilterComponent);
+  }
+
+  getContainer() {
+    return this._filterComponent.getElement;
   }
 
   _handleModelEvent() {
