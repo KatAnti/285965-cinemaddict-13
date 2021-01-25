@@ -1,4 +1,4 @@
-import Observer from "../utils/observer.js";
+import Observer from '../utils/observer.js';
 
 class CommentsModel extends Observer {
   constructor() {
@@ -36,6 +36,44 @@ class CommentsModel extends Observer {
     ];
 
     this._notify(updateType);
+  }
+
+  static adaptToClient(comment) {
+    const adaptedComment = Object.assign(
+        {},
+        comment,
+        {
+          user: comment.author,
+          emoji: comment.emotion,
+          message: comment.comment
+        }
+    );
+
+    delete adaptedComment.author;
+    delete adaptedComment.emotion;
+    delete adaptedComment.comment;
+
+    return adaptedComment;
+  }
+
+  static adaptToServer(film) {
+    const adaptedTask = Object.assign(
+        {},
+        film,
+        {
+          "due_date": film.dueDate instanceof Date ? film.dueDate.toISOString() : null, // На сервере дата хранится в ISO формате
+          "is_archived": film.isArchive,
+          "is_favorite": film.isFavorite,
+          "repeating_days": film.repeating
+        }
+    );
+
+    delete adaptedTask.dueDate;
+    delete adaptedTask.isArchive;
+    delete adaptedTask.isFavorite;
+    delete adaptedTask.repeating;
+
+    return adaptedTask;
   }
 }
 

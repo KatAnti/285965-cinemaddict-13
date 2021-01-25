@@ -9,8 +9,9 @@ import FooterStatistic from '../view/footer-statistics.js';
 import UserRank from '../view/user-rank.js';
 import MainNavigation from '../view/main-nav.js';
 import MainStatistic from '../view/main-statistics.js';
-import filter from "../utils/filters.js";
-import {generateUserStats} from "../mock/user-stats.js";
+import filter from '../utils/filters.js';
+import LoadingView from '../view/loading.js';
+import {calculateUserRank} from '../utils/statistic.js';
 import {ListsTitles, ListsType, RenderPosition, SortType, UserAction, UpdateType, ScreenMode} from '../const.js';
 import {render, remove} from '../utils/render.js';
 import {sortByDate, sortByRating, sortByCommentsAmount} from '../utils/film.js';
@@ -20,7 +21,7 @@ const EXTRA_FILMS_COUNT = 2;
 
 
 class FilmsBoardPresenter {
-  constructor(boardContainer, filmsModel, filterModel) {
+  constructor(boardContainer, filmsModel, filterModel, api) {
     this._boardFilms = null;
     this._filters = null;
     this._userStats = null;
@@ -34,9 +35,12 @@ class FilmsBoardPresenter {
     this._filmPresenter = {};
     this._currentSortType = SortType.DEFAULT;
     this._currentScreenMode = ScreenMode.FILMS;
+    this._api = api;
 
     this._sortComponent = null;
     this._showMoreButtonComponent = null;
+
+    this._isLoading = true;
 
     this._userRankComponent = null;
     this._filmBoardComponent = new FilmsBoard(this._currentScreenMode);
@@ -45,7 +49,7 @@ class FilmsBoardPresenter {
     this._mainListComponent = new FilmsList(ListsTitles.MAIN, ListsType.MAIN);
     this._topListComponent = new FilmsList(ListsTitles.TOP, ListsType.ADDITIONAL);
     this._commentedListComponent = new FilmsList(ListsTitles.MOST_COMMENTED, ListsType.ADDITIONAL);
-    this._footerStatsComponent = new FooterStatistic();
+    this._loadingComponent = new LoadingView();
     this._mainStatsComponent = null;
 
     this._handleShowMoreButtonClick = this._handleShowMoreButtonClick.bind(this);
@@ -62,11 +66,8 @@ class FilmsBoardPresenter {
     this._renderMainNav();
     this._filterPresenter = new FilterPresenter(this._mainNavComponent, this._filterModel, this._filmsModel);
     this._filterPresenter.init();
-    this._userStats = generateUserStats(this._filmsModel.getFilms());
     render(this._boardContainerMain, this._filmBoardComponent, RenderPosition.BEFOREEND);
     render(this._filmBoardComponent, this._mainListComponent, RenderPosition.BEFOREEND);
-    render(this._filmBoardComponent, this._topListComponent, RenderPosition.BEFOREEND);
-    render(this._filmBoardComponent, this._commentedListComponent, RenderPosition.BEFOREEND);
 
     this._filmsModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
@@ -84,20 +85,25 @@ class FilmsBoardPresenter {
       case SortType.BY_RATING:
         return filtredFilms.sort(sortByRating);
     }
-
     return filtredFilms;
   }
 
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE_FILM:
-        this._filmsModel.updateFilm(updateType, update);
+        this._api.updateFilm(update).then((response) => {
+          this._filmsModel.updateFilm(updateType, response);
+        });
         break;
       case UserAction.ADD_COMMENT:
-        this._filmsModel.updateFilm(updateType, update);
+        this._api.updateFilm(update).then((response) => {
+          this._filmsModel.updateFilm(updateType, response);
+        });
         break;
       case UserAction.DELETE_COMMENT:
-        this._filmsModel.updateFilm(updateType, update);
+        this._api.updateFilm(update).then((response) => {
+          this._filmsModel.updateFilm(updateType, response);
+        });
         break;
     }
   }
@@ -114,6 +120,12 @@ class FilmsBoardPresenter {
       case UpdateType.MAJOR:
         this._currentScreenMode = ScreenMode.FILMS;
         this._clearBoard({resetRenderedFilmCount: true, resetSortType: true});
+        this._renderBoard();
+        break;
+      case UpdateType.INIT:
+        this._isLoading = false;
+        remove(this._loadingComponent);
+        remove(this._noFilmsComponent);
         this._renderBoard();
         break;
     }
@@ -244,6 +256,14 @@ class FilmsBoardPresenter {
     render(this._boardContainerFooter, this._footerStatsComponent, RenderPosition.BEFOREEND);
   }
 
+  _renderLoading() {
+    render(this._mainListComponent.getContainer(), this._loadingComponent, RenderPosition.BEFOREEND);
+  }
+
+  _renderNoFilms() {
+    render(this._boardContainerMain, this._noFilmsComponent, RenderPosition.BEFOREEND);
+  }
+
   _clearBoard({resetRenderedFilmCount = false, resetSortType = false} = {}) {
     Object.values(this._filmPresenter).forEach((presenters) => {
       presenters.forEach((presenter) => {
@@ -255,9 +275,12 @@ class FilmsBoardPresenter {
     remove(this._userRankComponent);
     remove(this._noFilmsComponent);
     remove(this._showMoreButtonComponent);
+    remove(this._topListComponent);
+    remove(this._commentedListComponent);
     remove(this._sortComponent);
     remove(this._footerStatsComponent);
     remove(this._mainStatsComponent);
+    remove(this._loadingComponent);
 
     if (resetRenderedFilmCount) {
       this._renderedFilmsCount = FILMS_COUNT_PER_STEP;
@@ -271,8 +294,17 @@ class FilmsBoardPresenter {
   _renderBoard() {
     const films = this._getFilms();
     const filmCount = films.length;
+    this._userStats = calculateUserRank(this._filmsModel.getFilms());
+
+    this._footerStatsComponent = new FooterStatistic(filmCount);
+
     if (filmCount === 0) {
-      this.__renderNoFilms();
+      this._renderNoFilms();
+      return;
+    }
+
+    if (this._isLoading) {
+      this._renderLoading();
       return;
     }
 
@@ -285,6 +317,11 @@ class FilmsBoardPresenter {
 
     this._renderFilms(films.slice(0, Math.min(filmCount, this._renderedFilmsCount)));
 
+    if (!this._isLoading) {
+      render(this._filmBoardComponent, this._topListComponent, RenderPosition.BEFOREEND);
+      render(this._filmBoardComponent, this._commentedListComponent, RenderPosition.BEFOREEND);
+    }
+
     if (filmCount > this._renderedFilmsCount) {
       this._renderShowMoreButton();
     }
@@ -293,10 +330,6 @@ class FilmsBoardPresenter {
       this._filmBoardComponent.getElement().classList.remove(`visually-hidden`);
       this._mainNavComponent.getStatsButton().classList.remove(`main-navigation__item--active`);
     }
-  }
-
-  _renderNoFilms() {
-    render(this._boardContainerMain, this._noFilmsComponent, RenderPosition.BEFOREEND);
   }
 
 }

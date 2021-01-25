@@ -1,7 +1,6 @@
 import SmartView from '../view/smart.js';
 import Comment from '../view/comment.js';
 import {calculateDurationInHours} from '../utils/film.js';
-import {generateComment} from '../mock/comment.js';
 
 const ENTER = `Enter`;
 
@@ -23,7 +22,7 @@ const createGenres = (genres) => {
   return template;
 };
 
-const createFilmPopup = (data) => {
+const createFilmPopup = (data, commentsModel) => {
   const {title,
     originalTitle,
     poster,
@@ -37,7 +36,6 @@ const createFilmPopup = (data) => {
     country,
     genres,
     ageRestriction,
-    comments,
     isWatchlist,
     isWatched,
     isFavourite,
@@ -45,7 +43,7 @@ const createFilmPopup = (data) => {
 
   const genresTitle = genres.length > 1 ? `Genres` : `Genre`;
   const genresList = createGenres(genres);
-  const commentsList = createComments(comments.getComments());
+  const commentsList = createComments(commentsModel.getComments());
   const emojiIcon = localReview.emoji ? `<img src=${localReview.emoji} width="55" height="55">` : ``;
   const commentText = localReview.text ? localReview.text : ``;
   const durationTime = calculateDurationInHours(duration);
@@ -127,7 +125,7 @@ const createFilmPopup = (data) => {
 
         <div class="film-details__bottom-container">
         <section class="film-details__comments-wrap">
-        <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.getComments().length}</span></h3>
+        <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${commentsList.length}</span></h3>
 
         <ul class="film-details__comments-list">${commentsList}</ul>
 
@@ -167,10 +165,11 @@ const createFilmPopup = (data) => {
 };
 
 class FilmPopup extends SmartView {
-  constructor(film) {
+  constructor(film, commentsModel) {
     super();
     this._film = film;
     this._data = FilmPopup.parseFilmToData(film);
+    this._commentsModel = commentsModel;
 
     this._closeClickHandler = this._closeClickHandler.bind(this);
     this._favouriteClickHandler = this._favouriteClickHandler.bind(this);
@@ -182,11 +181,10 @@ class FilmPopup extends SmartView {
     this._deleteClickHandler = this._deleteClickHandler.bind(this);
 
     this.restoreHandlers();
-    this._commentsModel = this._data.comments;
   }
 
   getTemplate() {
-    return createFilmPopup(this._data, this._comments);
+    return createFilmPopup(this._data, this._commentsModel);
   }
 
   resetLocalComment() {
@@ -262,7 +260,6 @@ class FilmPopup extends SmartView {
 
   _closeClickHandler(evt) {
     evt.preventDefault();
-
     this.resetLocalComment();
     this._callback.closeClick(FilmPopup.parseDataToFilm(this._data));
   }
@@ -275,7 +272,7 @@ class FilmPopup extends SmartView {
 
   _formSubmitHandler(evt) {
     if ((evt.ctrlKey || evt.metaKey) && evt.key === ENTER) {
-      const newComment = generateComment();
+      const newComment = {};
       newComment.emoji = this._data.localReview.emoji;
       newComment.message = this._data.localReview.text;
       newComment.id = generateId();
