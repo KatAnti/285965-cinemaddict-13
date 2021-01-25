@@ -1,7 +1,7 @@
-import Filters from "../view/filters.js";
-import {render, replace, remove} from "../utils/render.js";
-import filter from "../utils/filters.js";
-import {FilterType, UpdateType, RenderPosition} from "../const.js";
+import Filters from '../view/filters.js';
+import {render, replace, remove} from '../utils/render.js';
+import filter from '../utils/filters.js';
+import {FilterType, UpdateType, RenderPosition} from '../const.js';
 
 class FilterPresenter {
   constructor(filterContainer, filterModel, filmsModel) {

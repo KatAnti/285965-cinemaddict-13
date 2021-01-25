@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
-import isBetween from "dayjs/plugin/isBetween";
-import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import isBetween from 'dayjs/plugin/isBetween';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import {TimePeriod, ranks} from '../const.js';
 
 dayjs.extend(isBetween);
@@ -14,6 +14,12 @@ const calculateRank = (watchedFilmsCount) => {
   }
 
   return ranks.get(`more`);
+};
+
+const calculateUserRank = (films) => {
+  return {
+    rank: calculateRank(films)
+  };
 };
 
 const checkDate = (watchingDate, dateFrom) => {
@@ -87,4 +93,4 @@ const getTimeWatching = (films) => {
   }, 0);
 };
 
-export {calculateRank, getFilmesWatchedOnPeriod, countGenres, sortedGenres, getTimeWatching};
+export {calculateRank, getFilmesWatchedOnPeriod, countGenres, sortedGenres, getTimeWatching, calculateUserRank};

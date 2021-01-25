@@ -36,7 +36,7 @@ const sortByRating = (prevFilm, nextFilm) => {
 };
 
 const sortByCommentsAmount = (prevFilm, nextFilm) => {
-  return nextFilm.comments.getComments().length - prevFilm.comments.getComments().length;
+  return nextFilm.comments.length - prevFilm.comments.length;
 };
 
 const calculateDurationInHours = (minutes, isStatistic) => {
