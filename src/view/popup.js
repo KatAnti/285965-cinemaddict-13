@@ -1,10 +1,9 @@
 import SmartView from '../view/smart.js';
+import dayjs from 'dayjs';
 import Comment from '../view/comment.js';
 import {calculateDurationInHours} from '../utils/film.js';
 
 const ENTER = `Enter`;
-
-const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
 
 const createComments = (comments) => {
   let template = ``;
@@ -44,7 +43,8 @@ const createFilmPopup = (data, commentsModel) => {
   const genresTitle = genres.length > 1 ? `Genres` : `Genre`;
   const genresList = createGenres(genres);
   const commentsList = createComments(commentsModel.getComments());
-  const emojiIcon = localReview.emoji ? `<img src=${localReview.emoji} width="55" height="55">` : ``;
+  const commentsCount = commentsModel.getComments().length;
+  const emojiIcon = localReview.emoji ? `<img src="./images/emoji/${localReview.emoji}.png" width="55" height="55">` : ``;
   const commentText = localReview.text ? localReview.text : ``;
   const durationTime = calculateDurationInHours(duration);
 
@@ -125,7 +125,7 @@ const createFilmPopup = (data, commentsModel) => {
 
         <div class="film-details__bottom-container">
         <section class="film-details__comments-wrap">
-        <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${commentsList.length}</span></h3>
+        <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${commentsCount}</span></h3>
 
         <ul class="film-details__comments-list">${commentsList}</ul>
 
@@ -135,26 +135,22 @@ const createFilmPopup = (data, commentsModel) => {
           <label class="film-details__comment-label">
             <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${commentText}</textarea>
           </label>
-
           <div class="film-details__emoji-list">
             <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile">
             <label class="film-details__emoji-label" for="emoji-smile">
-              <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
+              <img src="./images/emoji/smile.png" width="30" height="30" alt="smile">
             </label>
-
             <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
             <label class="film-details__emoji-label" for="emoji-sleeping">
-              <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
+              <img src="./images/emoji/sleeping.png" width="30" height="30" alt="sleeping">
             </label>
-
             <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke">
             <label class="film-details__emoji-label" for="emoji-puke">
-              <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
+              <img src="./images/emoji/puke.png" width="30" height="30" alt="puke">
             </label>
-
             <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
             <label class="film-details__emoji-label" for="emoji-angry">
-              <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
+              <img src="./images/emoji/angry.png" width="30" height="30" alt="angry">
             </label>
           </div>
         </div>
@@ -241,7 +237,7 @@ class FilmPopup extends SmartView {
     if (evt.target.matches(`img`)) {
       this.updateData({
         localReview: {
-          emoji: evt.target.src,
+          emoji: evt.target.getAttribute(`alt`),
           text: this._data.localReview.text
         }
       });
@@ -266,20 +262,22 @@ class FilmPopup extends SmartView {
 
   _deleteClickHandler(evt) {
     evt.preventDefault();
-    const commentId = Number(evt.target.closest(`li`).id);
-    this._callback.deleteClick(FilmPopup.parseDataToFilm(this._data), commentId);
+    evt.target.disabled = true;
+    evt.target.innerText = `Deleting…`;
+    this._callback.deleteClick(FilmPopup.parseDataToFilm(this._data), evt.target.closest(`li`));
   }
 
   _formSubmitHandler(evt) {
     if ((evt.ctrlKey || evt.metaKey) && evt.key === ENTER) {
+      const form = evt.target.closest(`form`);
       const newComment = {};
       newComment.emoji = this._data.localReview.emoji;
       newComment.message = this._data.localReview.text;
-      newComment.id = generateId();
+      newComment.date = dayjs().toDate();
 
-      this.resetLocalComment();
+      form.disabled = true;
 
-      this._callback.submitForm(FilmPopup.parseDataToFilm(this._data), newComment);
+      this._callback.submitForm(FilmPopup.parseDataToFilm(this._data), newComment, form);
     }
   }
 

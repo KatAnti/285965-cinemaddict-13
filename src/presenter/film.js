@@ -148,14 +148,31 @@ class FilmPresenter {
     this._changeData(UserAction.UPDATE_FILM, UpdateType.MINOR, film);
   }
 
-  _handleDeleteCommentButtonClick(film, commentId) {
+  _handleDeleteCommentButtonClick(film, comment) {
+    const commentId = comment.id;
+    const currentDeleteButton = comment.querySelector(`.film-details__comment-delete`);
+
     this._commentsModel.deleteComment(UserAction.PATCH, commentId);
-    this._changeData(UserAction.DELETE_COMMENT, UpdateType.PATCH, film);
+    api.deleteComment(commentId).then(() => {
+      this._changeData(UserAction.DELETE_COMMENT, UpdateType.PATCH, film);
+    })
+    .catch(() => {
+      comment.classList.add(`shake`);
+      currentDeleteButton.disabled = false;
+      currentDeleteButton.innerText = `Delete`;
+    });
   }
 
-  _handleSubmitCommentForm(film, newComment) {
-    this._commentsModel.addComment(UserAction.PATCH, newComment);
-    this._changeData(UserAction.ADD_COMMENT, UpdateType.PATCH, film);
+  _handleSubmitCommentForm(film, newComment, form) {
+    api.addComment(newComment, film.id).then(() => {
+      this._commentsModel.addComment(UserAction.PATCH, newComment);
+      this._changeData(UserAction.ADD_COMMENT, UpdateType.PATCH, film);
+      this._popupComponent.resetLocalComment();
+    })
+    .catch(() => {
+      form.classList.add(`shake`);
+      form.disabled = false;
+    });
   }
 
   _handleFavouriteClick() {
