@@ -1,4 +1,5 @@
 import Observer from '../utils/observer.js';
+import dayjs from 'dayjs';
 
 class CommentsModel extends Observer {
   constructor() {
@@ -45,7 +46,8 @@ class CommentsModel extends Observer {
         {
           user: comment.author,
           emoji: comment.emotion,
-          message: comment.comment
+          message: comment.comment,
+          date: dayjs(comment.date).format(`YY/MM/DD HH:mm`)
         }
     );
 
@@ -56,24 +58,21 @@ class CommentsModel extends Observer {
     return adaptedComment;
   }
 
-  static adaptToServer(film) {
-    const adaptedTask = Object.assign(
+  static adaptToServer(comment) {
+    const adaptedComment = Object.assign(
         {},
-        film,
+        comment,
         {
-          "due_date": film.dueDate instanceof Date ? film.dueDate.toISOString() : null, // На сервере дата хранится в ISO формате
-          "is_archived": film.isArchive,
-          "is_favorite": film.isFavorite,
-          "repeating_days": film.repeating
+          "comment": comment.message,
+          "date": comment.date,
+          "emotion": comment.emoji
         }
     );
 
-    delete adaptedTask.dueDate;
-    delete adaptedTask.isArchive;
-    delete adaptedTask.isFavorite;
-    delete adaptedTask.repeating;
+    delete adaptedComment.message;
+    delete adaptedComment.emoji;
 
-    return adaptedTask;
+    return adaptedComment;
   }
 }
 
