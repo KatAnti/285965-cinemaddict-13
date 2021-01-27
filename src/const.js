@@ -1,17 +1,3 @@
-const EMOJI = [
-  `images/emoji/angry.png`,
-  `images/emoji/puke.png`,
-  `images/emoji/sleeping.png`,
-  `images/emoji/smile.png`
-];
-
-const USERS = [
-  `Tim Macoveev`,
-  `John Doe`,
-  `Jhonny Ards`,
-  `Pipa Lupa`
-];
-
 const SortType = {
   DEFAULT: `default`,
   BY_DATE: `by-date`,
@@ -79,4 +65,4 @@ const TimePeriod = {
   YEAR: `YEAR`
 };
 
-export {EMOJI, USERS, ranks, ListsTitles, ListsType, RenderPosition, SortType, PopupMode, UserAction, UpdateType, FilterType, ScreenMode, TimePeriod};
+export {ranks, ListsTitles, ListsType, RenderPosition, SortType, PopupMode, UserAction, UpdateType, FilterType, ScreenMode, TimePeriod};

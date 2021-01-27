@@ -1,4 +1,4 @@
-import he from "he";
+import he from 'he';
 import AbstractView from '../view/abstract.js';
 
 const createComment = (comment) => {

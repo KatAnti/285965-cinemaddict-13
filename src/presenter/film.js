@@ -2,7 +2,7 @@ import {RenderPosition, PopupMode, UserAction, UpdateType} from '../const.js';
 import {render, remove, replace} from '../utils/render.js';
 import Film from '../view/film-card.js';
 import FilmPopup from '../view/popup.js';
-import api from "../utils/api.js";
+import api from '../utils/api.js';
 import CommentsModel from '../model/comments.js';
 const ESCAPE = `Escape`;
 const ESC = `Esc`;
@@ -52,7 +52,7 @@ class FilmPresenter {
 
     replace(this._filmComponent, prevFilmComponent);
     if (this._popupMode === PopupMode.OPEN) {
-      let scroll = prevPopupComponent.getElement().scrollTop;
+      const scroll = prevPopupComponent.getElement().scrollTop;
       this.closePopup();
       this._openPopup(this._film);
       this._popupComponent.getElement().scrollTop = scroll;

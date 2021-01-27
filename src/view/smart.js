@@ -25,8 +25,8 @@ class SmartView extends AbstractView {
   }
 
   updateElement() {
-    let prevElement = this.getElement();
-    let scroll = prevElement.scrollTop;
+    const prevElement = this.getElement();
+    const scroll = prevElement.scrollTop;
     const parent = prevElement.parentElement;
     this.removeElement();
 
