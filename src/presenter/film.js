@@ -1,9 +1,10 @@
-import {RenderPosition, PopupMode, UserAction, UpdateType} from '../const.js';
+import dayjs from 'dayjs';
 import {render, remove, replace} from '../utils/render.js';
 import Film from '../view/film-card.js';
 import FilmPopup from '../view/popup.js';
 import api from '../utils/api.js';
 import CommentsModel from '../model/comments.js';
+import {RenderPosition, PopupMode, UserAction, UpdateType} from '../const.js';
 const ESCAPE = `Escape`;
 const ESC = `Esc`;
 const bodyElement = document.querySelector(`body`);
@@ -31,6 +32,9 @@ class FilmPresenter {
     this._handleFavouriteClick = this._handleFavouriteClick.bind(this);
     this._handleWatchedClick = this._handleWatchedClick.bind(this);
     this._handleWatchlistClick = this._handleWatchlistClick.bind(this);
+    this._handleFavouritePopupButtonClick = this._handleFavouritePopupButtonClick.bind(this);
+    this._handleWatchedPopupButtonClick = this._handleWatchedPopupButtonClick.bind(this);
+    this._handleWatchlistPopupButtonClick = this._handleWatchlistPopupButtonClick.bind(this);
   }
 
   init(film) {
@@ -85,6 +89,10 @@ class FilmPresenter {
     this._popupComponent.setCloseClickHandler(this._handleClosePopupButtonClick);
     this._popupComponent.setDeleteClickHandler(this._handleDeleteCommentButtonClick);
     this._popupComponent.setFormSubmitHandler(this._handleSubmitCommentForm);
+
+    this._popupComponent.setFavouriteClickHandler(this._handleFavouritePopupButtonClick);
+    this._popupComponent.setWatchedClickHandler(this._handleWatchedPopupButtonClick);
+    this._popupComponent.setWatchlistClickHandler(this._handleWatchlistPopupButtonClick);
   }
 
   _removePopup() {
@@ -112,10 +120,10 @@ class FilmPresenter {
 
   _openPopup(film) {
     this._loadComments(film).then((commentsModel) => {
+      this._changePopupMode();
       this._commentsModel = commentsModel;
       this._popupComponent = new FilmPopup(film, this._commentsModel);
       this._setPopupEventHandlers();
-      this._changePopupMode();
       this._renderPopup();
       document.addEventListener(`keydown`, this._escKeyDownHandler);
       bodyElement.classList.add(`hide-overflow`);
@@ -143,6 +151,18 @@ class FilmPresenter {
     this._openPopup(this._film);
   }
 
+  _handleWatchlistPopupButtonClick(film) {
+    this._changeData(UserAction.UPDATE_FILM, UpdateType.MINOR, film);
+  }
+
+  _handleWatchedPopupButtonClick(film) {
+    this._changeData(UserAction.UPDATE_FILM, UpdateType.MINOR, film);
+  }
+
+  _handleFavouritePopupButtonClick(film) {
+    this._changeData(UserAction.UPDATE_FILM, UpdateType.MINOR, film);
+  }
+
   _handleClosePopupButtonClick(film) {
     this._removePopup();
     this._changeData(UserAction.UPDATE_FILM, UpdateType.MINOR, film);
@@ -152,9 +172,11 @@ class FilmPresenter {
     const commentId = comment.id;
     const currentDeleteButton = comment.querySelector(`.film-details__comment-delete`);
 
-    this._commentsModel.deleteComment(UserAction.PATCH, commentId);
     api.deleteComment(commentId).then(() => {
+      this._commentsModel.deleteComment(UserAction.PATCH, commentId);
       this._changeData(UserAction.DELETE_COMMENT, UpdateType.PATCH, film);
+      this._removePopup();
+      this._openPopup(film);
     })
     .catch(() => {
       comment.classList.add(`shake`);
@@ -168,6 +190,8 @@ class FilmPresenter {
       this._commentsModel.addComment(UserAction.PATCH, newComment);
       this._changeData(UserAction.ADD_COMMENT, UpdateType.PATCH, film);
       this._popupComponent.resetLocalComment();
+      this._removePopup();
+      this._openPopup(film);
     })
     .catch(() => {
       form.classList.add(`shake`);
@@ -176,45 +200,61 @@ class FilmPresenter {
   }
 
   _handleFavouriteClick() {
-    this._changeData(
-        UserAction.UPDATE_FILM,
-        UpdateType.PATCH,
-        Object.assign(
-            {},
-            this._film,
-            {
-              isFavourite: !this._film.isFavourite
-            }
-        )
+    const newFilm = Object.assign(
+        {},
+        this._film,
+        {
+          isFavourite: !this._film.isFavourite
+        }
     );
-  }
-
-  _handleWatchedClick() {
     this._changeData(
         UserAction.UPDATE_FILM,
         UpdateType.MINOR,
-        Object.assign(
-            {},
-            this._film,
-            {
-              isWatched: !this._film.isWatched
-            }
-        )
+        newFilm
     );
+    if (this._popupMode === PopupMode.OPEN) {
+      this._removePopup();
+      this._openPopup(newFilm);
+    }
+  }
+
+  _handleWatchedClick() {
+    const newFilm = Object.assign(
+        {},
+        this._film,
+        {
+          isWatched: !this._film.isWatched,
+          watchingDate: !this._film.isWatched ? dayjs() : null
+        }
+    );
+    this._changeData(
+        UserAction.UPDATE_FILM,
+        UpdateType.MINOR,
+        newFilm
+    );
+    if (this._popupMode === PopupMode.OPEN) {
+      this._removePopup();
+      this._openPopup(newFilm);
+    }
   }
 
   _handleWatchlistClick() {
+    const newFilm = Object.assign(
+        {},
+        this._film,
+        {
+          isWatchlist: !this._film.isWatchlist
+        }
+    );
     this._changeData(
         UserAction.UPDATE_FILM,
-        UpdateType.PATCH,
-        Object.assign(
-            {},
-            this._film,
-            {
-              isWatchlist: !this._film.isWatchlist
-            }
-        )
+        UpdateType.MINOR,
+        newFilm
     );
+    if (this._popupMode === PopupMode.OPEN) {
+      this._removePopup();
+      this._openPopup(newFilm);
+    }
   }
 }
 

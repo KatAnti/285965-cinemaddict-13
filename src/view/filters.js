@@ -1,20 +1,21 @@
 import AbstractView from '../view/abstract.js';
+import {ScreenMode} from '../const.js';
 
 const capitalizeWord = (word) => {
   return word[0].toUpperCase() + word.slice(1);
 };
 
-const createFilterItem = (filter, currentFilterType) => {
+const createFilterItem = (filter, currentFilterType, viewType) => {
   const {type, name, count} = filter;
 
   return name === `all`
-    ? `<a href="#${name}" class="main-navigation__item ${type === currentFilterType ? `main-navigation__item--active` : ``}">${capitalizeWord(name)} movies</a>`
-    : `<a href="#${name}" class="main-navigation__item ${type === currentFilterType ? `main-navigation__item--active` : ``}">${capitalizeWord(name)} <span class="main-navigation__item-count">${count}</span></a>`;
+    ? `<a href="#${name}" class="main-navigation__item ${type === currentFilterType && viewType !== ScreenMode.STATS ? `main-navigation__item--active` : ``}">${capitalizeWord(name)} movies</a>`
+    : `<a href="#${name}" class="main-navigation__item ${type === currentFilterType && viewType !== ScreenMode.STATS ? `main-navigation__item--active` : ``}">${capitalizeWord(name)} <span class="main-navigation__item-count">${count}</span></a>`;
 };
 
-const createFilters = (filterItems, currentFilterType) => {
+const createFilters = (filterItems, currentFilterType, viewType) => {
   const filterItemsTemplate = filterItems
-    .map((filter) => createFilterItem(filter, currentFilterType))
+    .map((filter) => createFilterItem(filter, currentFilterType, viewType))
     .join(``);
   return `<div class="main-navigation__items">
         ${filterItemsTemplate}
@@ -22,16 +23,17 @@ const createFilters = (filterItems, currentFilterType) => {
 };
 
 class Filters extends AbstractView {
-  constructor(filterItems, currentFilterType) {
+  constructor(filterItems, currentFilterType, viewType) {
     super();
     this._filterItems = filterItems;
     this._currentFilterType = currentFilterType;
+    this._viewType = viewType;
 
     this._filterTypeChangeHandler = this._filterTypeChangeHandler.bind(this);
   }
 
   getTemplate() {
-    return createFilters(this._filterItems, this._currentFilterType);
+    return createFilters(this._filterItems, this._currentFilterType, this._viewType);
   }
 
   _filterTypeChangeHandler(evt) {

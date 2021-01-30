@@ -195,15 +195,15 @@ class FilmPopup extends SmartView {
 
   restoreHandlers() {
     this._setInnerHandlers();
+    this.setWatchedClickHandler(this._callback.watchedClick);
+    this.setWatchlistClickHandler(this._callback.watchlistClick);
+    this.setFavouriteClickHandler(this._callback.favouriteClick);
     this.setCloseClickHandler(this._callback.closeClick);
     this.setFormSubmitHandler(this._callback.submitForm);
     this.setDeleteClickHandler(this._callback.deleteClick);
   }
 
   _setInnerHandlers() {
-    this.getElement().querySelector(`.film-details__control-label--watched`).addEventListener(`click`, this._watchedClickHandler);
-    this.getElement().querySelector(`.film-details__control-label--watchlist`).addEventListener(`click`, this._watchlistClickHandler);
-    this.getElement().querySelector(`.film-details__control-label--favorite`).addEventListener(`click`, this._favouriteClickHandler);
     this.getElement().querySelector(`.film-details__emoji-list`).addEventListener(`click`, this._emojiChangeHandler);
     this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`input`, this._commentTextareaHandler);
   }
@@ -214,14 +214,19 @@ class FilmPopup extends SmartView {
     this.updateData({
       isFavourite: !this._data.isFavourite
     });
+
+    this._callback.favouriteClick(FilmPopup.parseDataToFilm(this._data));
   }
 
   _watchedClickHandler(evt) {
     evt.preventDefault();
 
     this.updateData({
-      isWatched: !this._data.isWatched
+      isWatched: !this._data.isWatched,
+      watchingDate: !this._data.isWatched ? dayjs() : null
     });
+
+    this._callback.watchedClick(FilmPopup.parseDataToFilm(this._data));
   }
 
   _watchlistClickHandler(evt) {
@@ -230,6 +235,8 @@ class FilmPopup extends SmartView {
     this.updateData({
       isWatchlist: !this._data.isWatchlist
     });
+
+    this._callback.watchlistClick(FilmPopup.parseDataToFilm(this._data));
   }
 
   _emojiChangeHandler(evt) {
@@ -279,6 +286,21 @@ class FilmPopup extends SmartView {
 
       this._callback.submitForm(FilmPopup.parseDataToFilm(this._data), newComment, form);
     }
+  }
+
+  setWatchedClickHandler(callback) {
+    this._callback.watchedClick = callback;
+    this.getElement().querySelector(`.film-details__control-label--watched`).addEventListener(`click`, this._watchedClickHandler);
+  }
+
+  setWatchlistClickHandler(callback) {
+    this._callback.watchlistClick = callback;
+    this.getElement().querySelector(`.film-details__control-label--watchlist`).addEventListener(`click`, this._watchlistClickHandler);
+  }
+
+  setFavouriteClickHandler(callback) {
+    this._callback.favouriteClick = callback;
+    this.getElement().querySelector(`.film-details__control-label--favorite`).addEventListener(`click`, this._favouriteClickHandler);
   }
 
   setCloseClickHandler(callback) {

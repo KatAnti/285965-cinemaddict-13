@@ -7,14 +7,15 @@ const createMainNav = () => {
 };
 
 class MainNavigation extends AbstractView {
-  constructor() {
+  constructor(viewType) {
     super();
 
+    this._viewType = viewType;
     this._statsClickHandler = this._statsClickHandler.bind(this);
   }
 
   getTemplate() {
-    return createMainNav();
+    return createMainNav(this._viewType);
   }
 
   getStatsButton() {

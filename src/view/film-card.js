@@ -2,10 +2,13 @@ import dayjs from 'dayjs';
 import AbstractView from '../view/abstract.js';
 import {isPropertyActive, calculateDurationInHours} from '../utils/film.js';
 
+const MAX_DESCRIPTION_LENGTH = 140;
+const DESRIPTION_REDUCED_LENGTH = 138;
+
 const createFilmCard = (film) => {
   const mainGenre = film.genres[0];
   const commentsAmount = `${film.comments.length} comments`;
-  const shortDescription = film.description.length > 140 ? film.description.slice(0, 138) + `...` : film.description;
+  const shortDescription = film.description.length > MAX_DESCRIPTION_LENGTH ? film.description.slice(0, DESRIPTION_REDUCED_LENGTH) + `...` : film.description;
   const isFilmOnWatchlist = isPropertyActive(film.isWatchlist);
   const isFilmMarkedAsWatched = isPropertyActive(film.isWatched);
   const isFilmFavourite = isPropertyActive(film.isFavourite);

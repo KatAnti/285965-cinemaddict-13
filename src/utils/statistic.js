@@ -23,9 +23,9 @@ const calculateUserRank = (films) => {
 };
 
 const checkDate = (watchingDate, dateFrom) => {
-  const dateTo = dayjs().toDate();
+  const dateTo = dayjs();
   if (
-    dayjs(watchingDate).isSame(dateFrom) ||
+    dayjs(watchingDate).isSame(dateFrom, `day`) ||
     dayjs(watchingDate).isBetween(dateFrom, dateTo) ||
     dayjs(watchingDate).isSame(dateTo)
   ) {
@@ -39,20 +39,20 @@ const getFilmesWatchedOnPeriod = (films, timePeriod) => {
   return films.filter((film) => {
     let isWatchedInTime = false;
 
-    let dateFrom = dayjs().toDate();
+    let dateFrom = dayjs();
     switch (timePeriod) {
       case TimePeriod.TODAY:
-        dateFrom = dayjs().toDate();
+        dateFrom = dayjs();
         break;
       case TimePeriod.WEEK:
         const daysToFullWeek = 6;
-        dateFrom = dayjs().subtract(daysToFullWeek, `day`).toDate();
+        dateFrom = dayjs().subtract(daysToFullWeek, `day`);
         break;
       case TimePeriod.MONTH:
-        dateFrom = dayjs().subtract(1, `month`).toDate();
+        dateFrom = dayjs().subtract(1, `month`);
         break;
       case TimePeriod.YEAR:
-        dateFrom = dayjs().subtract(1, `year`).toDate();
+        dateFrom = dayjs().subtract(1, `year`);
         break;
     }
 

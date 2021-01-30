@@ -43,7 +43,7 @@ class FilmsBoardPresenter {
     this._isLoading = true;
 
     this._userRankComponent = null;
-    this._filmBoardComponent = new FilmsBoard(this._currentScreenMode);
+    this._filmBoardComponent = new FilmsBoard();
     this._mainNavComponent = null;
     this._noFilmsComponent = new NoFilms();
     this._mainListComponent = new FilmsList(ListsTitles.MAIN, ListsType.MAIN);
@@ -65,7 +65,7 @@ class FilmsBoardPresenter {
   init() {
     this._renderMainNav();
     this._filterPresenter = new FilterPresenter(this._mainNavComponent, this._filterModel, this._filmsModel);
-    this._filterPresenter.init();
+    this._filterPresenter.init(this._currentScreenMode);
     render(this._boardContainerMain, this._filmBoardComponent, RenderPosition.BEFOREEND);
     render(this._filmBoardComponent, this._mainListComponent, RenderPosition.BEFOREEND);
 
@@ -112,6 +112,8 @@ class FilmsBoardPresenter {
     switch (updateType) {
       case UpdateType.PATCH:
         this._updateCurrentFilm(update);
+        this._clearBoard();
+        this._renderBoard();
         break;
       case UpdateType.MINOR:
         this._clearBoard();
@@ -145,7 +147,7 @@ class FilmsBoardPresenter {
     }
 
     this._currentSortType = sortType;
-    this._clearBoard();
+    this._clearBoard({resetRenderedFilmCount: true});
     this._renderBoard();
   }
 
@@ -185,6 +187,7 @@ class FilmsBoardPresenter {
     this._sortComponent.hide();
     this._mainStatsComponent.show();
     this._currentScreenMode = ScreenMode.STATS;
+    this._filterPresenter.init(this._currentScreenMode);
   }
 
   _renderShowMoreButton() {
@@ -296,10 +299,11 @@ class FilmsBoardPresenter {
     const filmCount = films.length;
     this._userStats = calculateUserRank(this._filmsModel.getFilms());
 
-    this._footerStatsComponent = new FooterStatistic(filmCount);
+    this._footerStatsComponent = new FooterStatistic(this._filmsModel.getFilms().length);
 
     if (filmCount === 0) {
       this._renderNoFilms();
+      this._renderMainStats();
       return;
     }
 

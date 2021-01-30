@@ -47,8 +47,8 @@ const UpdateType = {
 
 const FilterType = {
   ALL: `all`,
-  WATCHED: `watched`,
   WATCHLIST: `watchlist`,
+  HISTORY: `history`,
   FAVORITES: `favorites`
 };
 
